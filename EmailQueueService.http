@@ -11,5 +11,14 @@ Content-Type: application/json
     {
         "emailAddress": "test2@example.com",
         "body": "Test email 2"
+    },
+    {
+        "emailAddress": "test3@example.com",
+        "body": "Test email 3"
     }
 ]
+
+###
+
+GET {{EmailQueue_HostAddress}}/email
+Content-Type: application/json
