@@ -21,8 +21,8 @@ public class EmailTask
     [StringLength(15)]
     public string Status { get; private set; } = "Queued";
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset? AttemptedAt { [UsedImplicitly] get; private set; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime? AttemptedAt { [UsedImplicitly] get; private set; }
 
     // User-supplied properties
 
@@ -43,13 +43,13 @@ public class EmailTask
     public void MarkAsSent()
     {
         Status = "Sent";
-        AttemptedAt = DateTimeOffset.UtcNow;
+        AttemptedAt = DateTime.UtcNow;
     }
 
     public void MarkAsFailed()
     {
         Status = "Failed";
-        AttemptedAt = DateTimeOffset.UtcNow;
+        AttemptedAt = DateTime.UtcNow;
     }
 
     public static EmailTask Create(NewEmailTask resource, Guid batchId, string apiKeyOwner, int counter) =>
