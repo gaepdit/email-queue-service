@@ -26,7 +26,7 @@ public class EmailController(IQueueService queueService, EmailQueueDbContext dbC
     [HttpPost]
     public async Task<IActionResult> EnqueueEmails([FromBody] EmailTask[] tasks)
     {
-        await queueService.EnqueueItems(tasks);
+        await queueService.EnqueueItems(tasks, User.Identity?.Name ?? "[unknown]");
         return Ok($"Enqueued {tasks.Length} email tasks for processing");
     }
 }

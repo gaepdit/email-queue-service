@@ -7,7 +7,7 @@ namespace EmailQueueService.Services;
 
 public interface IQueueService
 {
-    Task EnqueueItems(IEnumerable<EmailTask> items);
+    Task EnqueueItems(IEnumerable<EmailTask> items, string apiKeyOwner);
     Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken);
     Task InitializeQueueFromDatabase();
 }
@@ -38,7 +38,7 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
         logger.LogInformation("Initialized queue with {Count} pending tasks from database", pendingTasks.Count);
     }
 
-    public async Task EnqueueItems(IEnumerable<EmailTask> items)
+    public async Task EnqueueItems(IEnumerable<EmailTask> items, string apiKeyOwner)
     {
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
@@ -50,20 +50,20 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
             // Initialize all task properties
             item.Id = Guid.NewGuid();
             item.Counter = Interlocked.Increment(ref _currentCounter);
-
-            await dbContext.EmailTasks.AddAsync(item);
+            item.ApiKeyOwner = apiKeyOwner;
         }
 
+        await dbContext.EmailTasks.AddRangeAsync(emailTasks);
         await dbContext.SaveChangesAsync();
 
-        // Only enqueue items in memory after they're saved to the database
+        // Enqueue items in memory after they're saved to the database
         foreach (var item in emailTasks)
         {
             _queue.Enqueue(item);
             _signal.Release();
         }
 
-        logger.LogInformation("Enqueued {Count} new tasks", emailTasks.Count());
+        logger.LogInformation("Enqueued {Count} new tasks", emailTasks.Length);
     }
 
     public async Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken)

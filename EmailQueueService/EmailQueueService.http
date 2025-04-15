@@ -13,10 +13,6 @@ X-API-Key: {{ApiKey}}
   {
     "emailAddress": "test2@example.com",
     "body": "Test email 2"
-  },
-  {
-    "emailAddress": "test3@example.com",
-    "body": "Test email 3"
   }
 ]
 

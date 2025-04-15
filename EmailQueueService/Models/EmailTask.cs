@@ -11,6 +11,8 @@ public class EmailTask
     [Required(AllowEmptyStrings = false)]
     public string Status { get; set; } = "Queued";
 
+    [StringLength(25)]
+    public string? ApiKeyOwner { get; set; } 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? SentAt { get; set; }
 
