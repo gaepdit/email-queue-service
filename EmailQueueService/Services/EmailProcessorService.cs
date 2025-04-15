@@ -67,7 +67,7 @@ public class EmailProcessorService(
         {
             await EmailTask.SendEmailAsync(task);
             dbTask.Status = "Sent";
-            dbTask.SentAt = DateTimeOffset.UtcNow;
+            dbTask.SentAt = DateTime.UtcNow;
             await dbContext.SaveChangesAsync();
             logger.LogInformation("Successfully sent email task: {Counter}", task.Counter);
         }

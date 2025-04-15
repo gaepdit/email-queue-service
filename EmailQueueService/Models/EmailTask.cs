@@ -15,8 +15,8 @@ public class EmailTask
     [StringLength(50)]
     public string? ApiKeyOwner { get; set; }
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset? SentAt { get; set; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime? SentAt { get; set; }
 
     // User-supplied data
 
@@ -36,7 +36,7 @@ public class EmailTask
     public static Task SendEmailAsync(EmailTask task)
     {
         // TODO: Replace with code to send an email.
-        Console.WriteLine($"Email {task.Counter} sent at {DateTimeOffset.UtcNow}");
+        Console.WriteLine($"Email {task.Counter} sent at {DateTime.UtcNow}");
         return Task.CompletedTask;
     }
 }

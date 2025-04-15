@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(nameof(SecuritySchemeType.ApiKey))
 
 // Add database context
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure settings
 builder.Services.Configure<EmailQueueSettings>(
