@@ -1,13 +1,31 @@
 using EmailQueueService.Data;
 using EmailQueueService.Models;
 using EmailQueueService.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    const string securityDefinitionName = "ApiKeyHeader";
+    options.AddSecurityDefinition(securityDefinitionName, new OpenApiSecurityScheme()
+    {
+        Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName,
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+    });
+    var openApiSecurityScheme = new OpenApiSecurityScheme
+        { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = securityDefinitionName } };
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement { { openApiSecurityScheme, [] }, });
+});
+
+// Configure API Key Authentication
+builder.Services.AddAuthentication(nameof(SecuritySchemeType.ApiKey))
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(nameof(SecuritySchemeType.ApiKey), null);
 
 // Add database context
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
@@ -37,6 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

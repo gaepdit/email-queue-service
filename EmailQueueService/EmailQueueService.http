@@ -1,7 +1,9 @@
 @EmailQueue_HostAddress = https://localhost:7145
+@ApiKey = your-secret-api-key-1
 
 POST {{EmailQueue_HostAddress}}/email
 Content-Type: application/json
+X-API-Key: {{ApiKey}}
 
 [
   {
@@ -22,3 +24,12 @@ Content-Type: application/json
 
 GET {{EmailQueue_HostAddress}}/email
 Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+###
+
+@InvalidApiKey = invalid-api-key
+
+GET {{EmailQueue_HostAddress}}/email
+Content-Type: application/json
+X-API-Key: {{InvalidApiKey}}

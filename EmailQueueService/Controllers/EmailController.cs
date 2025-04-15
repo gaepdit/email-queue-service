@@ -1,13 +1,16 @@
 using EmailQueueService.Data;
 using EmailQueueService.Models;
 using EmailQueueService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace EmailQueueService.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(AuthenticationSchemes = nameof(SecuritySchemeType.ApiKey))]
 public class EmailController(IQueueService queueService, EmailQueueDbContext dbContext) : ControllerBase
 {
     [HttpGet]
