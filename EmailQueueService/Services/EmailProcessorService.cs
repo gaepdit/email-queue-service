@@ -47,7 +47,7 @@ public class EmailProcessorService(
 
     private async Task ProcessItemAsync(EmailTask task)
     {
-        logger.LogInformation("Processing email task: {Counter} for {Email}", task.Counter, task.EmailAddress);
+        logger.LogInformation("Processing email task: {Counter}", task.Counter);
 
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();

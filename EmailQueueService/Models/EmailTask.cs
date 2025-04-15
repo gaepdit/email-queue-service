@@ -7,22 +7,30 @@ public class EmailTask
     public Guid Id { get; set; }
     public int Counter { get; set; }
 
-    [StringLength(15)]
     [Required(AllowEmptyStrings = false)]
+    [StringLength(15)]
     public string Status { get; set; } = "Queued";
 
-    [StringLength(25)]
-    public string? ApiKeyOwner { get; set; } 
+    [StringLength(50)]
+    public string? ApiKeyOwner { get; set; }
+
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? SentAt { get; set; }
 
-    [StringLength(150)]
-    [Required(AllowEmptyStrings = false)]
-    public string EmailAddress { get; init; } = string.Empty;
+    // User-supplied data
 
-    [StringLength(7000)]
     [Required(AllowEmptyStrings = false)]
-    public string Body { get; init; } = string.Empty;
+    public List<string> Recipients { get; init; } = [];
+
+    [Required(AllowEmptyStrings = false)]
+    [StringLength(200)]
+    public string Subject { get; init; } = null!;
+
+    [Required(AllowEmptyStrings = false)]
+    [StringLength(20000)]
+    public string Body { get; init; } = null!;
+
+    public bool IsHtml { get; init; }
 
     public static Task SendEmailAsync(EmailTask task)
     {

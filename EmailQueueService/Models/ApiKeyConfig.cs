@@ -5,11 +5,11 @@ namespace EmailQueueService.Models;
 public class ApiKeyConfig
 {
     [JsonPropertyName("key")]
-    public string Key { get; set; } = string.Empty;
+    public string Key { get; init; } = string.Empty;
     
     [JsonPropertyName("owner")]
-    public string Owner { get; set; } = string.Empty;
+    public string Owner { get; init; } = string.Empty;
     
     [JsonPropertyName("generatedAt")]
-    public DateTimeOffset GeneratedAt { get; set; }
+    public DateTimeOffset GeneratedAt { get; init; }
 }

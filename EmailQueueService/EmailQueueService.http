@@ -7,12 +7,15 @@ X-API-Key: {{ApiKey}}
 
 [
   {
-    "emailAddress": "test1@example.com",
-    "body": "Test email 1"
+    "recipients": ["test1@example.com", "test1cc@example.com"],
+    "subject": "Test Email 1",
+    "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
+    "isHtml": true
   },
   {
-    "emailAddress": "test2@example.com",
-    "body": "Test email 2"
+    "recipients": ["test2@example.com"],
+    "subject": "Test Email 2",
+    "body": "Plain text content for email 2"
   }
 ]
 
