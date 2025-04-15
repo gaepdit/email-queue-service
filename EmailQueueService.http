@@ -1,0 +1,15 @@
+@EmailQueue_HostAddress = https://localhost:7145
+
+POST {{EmailQueue_HostAddress}}/email
+Content-Type: application/json
+
+[
+    {
+        "emailAddress": "test1@example.com",
+        "body": "Test email 1"
+    },
+    {
+        "emailAddress": "test2@example.com",
+        "body": "Test email 2"
+    }
+]
