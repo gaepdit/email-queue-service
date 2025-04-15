@@ -1,14 +1,10 @@
-using Microsoft.EntityFrameworkCore;
 using EmailQueueService.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailQueueService.Data;
 
-public class EmailQueueDbContext : DbContext
+public class EmailQueueDbContext(DbContextOptions<EmailQueueDbContext> options) : DbContext(options)
 {
-    public EmailQueueDbContext(DbContextOptions<EmailQueueDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<EmailTask> EmailTasks { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

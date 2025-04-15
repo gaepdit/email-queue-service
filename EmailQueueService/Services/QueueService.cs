@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
 using EmailQueueService.Data;
 using EmailQueueService.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 
 namespace EmailQueueService.Services;
 
@@ -12,25 +12,17 @@ public interface IQueueService
     Task InitializeQueueFromDatabase();
 }
 
-public class QueueService : IQueueService
+public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueService> logger) : IQueueService
 {
     private readonly ConcurrentQueue<EmailTask> _queue = new();
     private readonly SemaphoreSlim _signal = new(0);
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<QueueService> _logger;
     private int _currentCounter;
-
-    public QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueService> logger)
-    {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
-    }
 
     public async Task InitializeQueueFromDatabase()
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
-        
+
         var pendingTasks = await dbContext.EmailTasks
             .Where(t => t.Status == "Queued")
             .OrderBy(t => t.CreatedAt)
@@ -40,36 +32,38 @@ public class QueueService : IQueueService
         {
             _queue.Enqueue(task);
             _signal.Release();
-            _currentCounter = Math.Max(_currentCounter, task.Counter);
         }
 
-        _logger.LogInformation("Initialized queue with {Count} pending tasks from database", pendingTasks.Count);
+        _currentCounter = await dbContext.EmailTasks.DefaultIfEmpty().MaxAsync(t => t == null ? 0 : t.Counter);
+        logger.LogInformation("Initialized queue with {Count} pending tasks from database", pendingTasks.Count);
     }
 
     public async Task EnqueueItems(IEnumerable<EmailTask> items)
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
 
-        foreach (var item in items)
+        var emailTasks = items as EmailTask[] ?? items.ToArray();
+
+        foreach (var item in emailTasks)
         {
             // Initialize all task properties
             item.Id = Guid.NewGuid();
             item.Counter = Interlocked.Increment(ref _currentCounter);
-            
+
             await dbContext.EmailTasks.AddAsync(item);
         }
 
         await dbContext.SaveChangesAsync();
 
         // Only enqueue items in memory after they're saved to the database
-        foreach (var item in items)
+        foreach (var item in emailTasks)
         {
             _queue.Enqueue(item);
             _signal.Release();
         }
-        
-        _logger.LogInformation("Enqueued {Count} new tasks", items.Count());
+
+        logger.LogInformation("Enqueued {Count} new tasks", emailTasks.Count());
     }
 
     public async Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken)

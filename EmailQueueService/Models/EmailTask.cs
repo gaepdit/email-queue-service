@@ -1,18 +1,30 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace EmailQueueService.Models;
 
 public class EmailTask
 {
     public Guid Id { get; set; }
     public int Counter { get; set; }
-    public string Status { get; set; } = "Queued";
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset? SentAt { get; set; }
-    public string EmailAddress { get; set; } = string.Empty;
-    public string Body { get; set; } = string.Empty;
 
-    public Task SendEmailAsync(EmailTask task)
+    [StringLength(15)]
+    [Required(AllowEmptyStrings = false)]
+    public string Status { get; set; } = "Queued";
+
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? SentAt { get; set; }
+
+    [StringLength(150)]
+    [Required(AllowEmptyStrings = false)]
+    public string EmailAddress { get; init; } = string.Empty;
+
+    [StringLength(7000)]
+    [Required(AllowEmptyStrings = false)]
+    public string Body { get; init; } = string.Empty;
+
+    public static Task SendEmailAsync(EmailTask task)
     {
-        // Simulate sending an email
+        // TODO: Replace with code to send an email.
         Console.WriteLine($"Email {task.Counter} sent at {DateTimeOffset.UtcNow}");
         return Task.CompletedTask;
     }

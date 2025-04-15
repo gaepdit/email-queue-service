@@ -1,6 +1,6 @@
-using EmailQueueService.Services;
-using EmailQueueService.Models;
 using EmailQueueService.Data;
+using EmailQueueService.Models;
+using EmailQueueService.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +19,7 @@ builder.Services.Configure<EmailQueueSettings>(
 
 // Register our services
 builder.Services.AddSingleton<IQueueService, QueueService>();
-builder.Services.AddHostedService<DataProcessorService>();
+builder.Services.AddHostedService<EmailProcessorService>();
 
 var app = builder.Build();
 
