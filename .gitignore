@@ -530,6 +530,26 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,jetbrains
 
-######## App-specific
+########################
+### Project-specific ###
 
+# JetBrains configuration files.
 .idea/
+
+# Web deploy settings
+!**/PublishProfiles/*.pubxml
+
+# Environment settings files
+appsettings.*.json
+
+## Build artifacts
+# MSBuild
+.artifacts/
+# Library Manager
+**/wwwroot/lib/
+
+# SonarLint Rider plugin
+.idea/**/sonarlint-state.xml
+
+# Code coverage report from ReportGenerator
+coveragereport/
