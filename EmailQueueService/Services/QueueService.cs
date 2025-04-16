@@ -67,7 +67,7 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
             _signal.Release();
         }
 
-        logger.LogInformation("Enqueued {Count} new tasks", emailTasksArray.Length);
+        logger.LogInformation("Enqueued {Count} new email tasks", emailTasksArray.Length);
         return batchId;
     }
 

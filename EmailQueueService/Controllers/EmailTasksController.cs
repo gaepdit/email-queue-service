@@ -37,12 +37,13 @@ public class EmailTasksController(IQueueService queueService, EmailQueueDbContex
     [HttpPost]
     public async Task<IActionResult> EnqueueEmailsAsync([FromBody] EmailTask[] emailTasks)
     {
-        var emptySubmissionResult = new { message = "No email tasks submitted.", count = 0 };
+        var emptySubmissionResult = new { status = "Empty", message = "No email tasks submitted.", count = 0 };
         if (emailTasks.Length == 0) return Ok(emptySubmissionResult);
 
         var batchId = await queueService.EnqueueItems(emailTasks, User.Identity?.Name ?? "[unknown]");
+
         return batchId == null
             ? Ok(emptySubmissionResult)
-            : Ok(new { message = "Emails have been queued.", count = emailTasks.Length, batchId });
+            : Ok(new { status = "Success", message = "Emails have been queued.", count = emailTasks.Length, batchId });
     }
 }

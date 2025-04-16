@@ -553,3 +553,6 @@ appsettings.*.json
 
 # Code coverage report from ReportGenerator
 coveragereport/
+
+# Sqlite database and associated files
+EmailQueue.db*

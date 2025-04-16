@@ -25,6 +25,22 @@ X-API-Key: {{ApiKey}}
     ],
     "subject": "Test Email 2",
     "body": "Plain text content for email 2"
+  },
+  {
+    "recipients": [
+      "test3@example.com",
+      "test3cc@example.com"
+    ],
+    "subject": "Test Email 3",
+    "body": "<h1>Test Email 3</h1><p>HTML content for email 3</p>",
+    "isHtml": true
+  },
+  {
+    "recipients": [
+      "test4@example.com"
+    ],
+    "subject": "Test Email 4",
+    "body": "Plain text content for email 4"
   }
 ]
 
