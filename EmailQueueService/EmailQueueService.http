@@ -1,19 +1,28 @@
 @EmailQueue_HostAddress = https://localhost:7145
 @ApiKey = your-secret-api-key-1
+@InvalidApiKey = invalid-api-key
 
-POST {{EmailQueue_HostAddress}}/email
+###
+
+# @name addTasks
+POST {{EmailQueue_HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
 [
   {
-    "recipients": ["test1@example.com", "test1cc@example.com"],
+    "recipients": [
+      "test1@example.com",
+      "test1cc@example.com"
+    ],
     "subject": "Test Email 1",
     "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
     "isHtml": true
   },
   {
-    "recipients": ["test2@example.com"],
+    "recipients": [
+      "test2@example.com"
+    ],
     "subject": "Test Email 2",
     "body": "Plain text content for email 2"
   }
@@ -21,14 +30,36 @@ X-API-Key: {{ApiKey}}
 
 ###
 
-GET {{EmailQueue_HostAddress}}/email
+@batchId = {{addTasks.response.body.batchId}}
+
+GET {{EmailQueue_HostAddress}}/emailTasks/list/{{batchId}}
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
 ###
 
-@InvalidApiKey = invalid-api-key
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
 
-GET {{EmailQueue_HostAddress}}/email
+[]
+
+###
+
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+###
+
+GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
 X-API-Key: {{InvalidApiKey}}
+
+###
+
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{InvalidApiKey}}
+
+[]

@@ -5,6 +5,7 @@ namespace EmailQueueService.Models;
 public class EmailTask
 {
     public Guid Id { get; set; }
+    public Guid BatchId { get; set; }
     public int Counter { get; set; }
 
     [Required(AllowEmptyStrings = false)]

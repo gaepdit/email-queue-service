@@ -7,7 +7,7 @@ namespace EmailQueueService.Services;
 
 public interface IQueueService
 {
-    Task EnqueueItems(IEnumerable<EmailTask> items, string apiKeyOwner);
+    Task<Guid?> EnqueueItems(IEnumerable<EmailTask> emailTasks, string apiKeyOwner);
     Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken);
     Task InitializeQueueFromDatabase();
 }
@@ -38,32 +38,37 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
         logger.LogInformation("Initialized queue with {Count} pending tasks from database", pendingTasks.Count);
     }
 
-    public async Task EnqueueItems(IEnumerable<EmailTask> items, string apiKeyOwner)
+    public async Task<Guid?> EnqueueItems(IEnumerable<EmailTask> emailTasks, string apiKeyOwner)
     {
+        var emailTasksArray = emailTasks as EmailTask[] ?? emailTasks.ToArray();
+        if (emailTasksArray.Length == 0) return null;
+
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
 
-        var emailTasks = items as EmailTask[] ?? items.ToArray();
+        var batchId = Guid.NewGuid();
 
-        foreach (var item in emailTasks)
+        foreach (var item in emailTasksArray)
         {
             // Initialize all task properties
             item.Id = Guid.NewGuid();
+            item.BatchId = batchId;
             item.Counter = Interlocked.Increment(ref _currentCounter);
             item.ApiKeyOwner = apiKeyOwner;
         }
 
-        await dbContext.EmailTasks.AddRangeAsync(emailTasks);
+        await dbContext.EmailTasks.AddRangeAsync(emailTasksArray);
         await dbContext.SaveChangesAsync();
 
         // Enqueue items in memory after they're saved to the database
-        foreach (var item in emailTasks)
+        foreach (var item in emailTasksArray)
         {
             _queue.Enqueue(item);
             _signal.Release();
         }
 
-        logger.LogInformation("Enqueued {Count} new tasks", emailTasks.Length);
+        logger.LogInformation("Enqueued {Count} new tasks", emailTasksArray.Length);
+        return batchId;
     }
 
     public async Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken)
