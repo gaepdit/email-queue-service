@@ -1,9 +1,9 @@
-using EmailQueueService.Data;
-using EmailQueueService.Models;
+using EmailQueue.API.Data;
+using EmailQueue.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 
-namespace EmailQueueService.Services;
+namespace EmailQueue.API.Services;
 
 public interface IQueueService
 {

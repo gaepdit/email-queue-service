@@ -1,6 +1,6 @@
-using EmailQueueService.Data;
-using EmailQueueService.Models;
-using EmailQueueService.Services;
+using EmailQueue.API.Data;
+using EmailQueue.API.Models;
+using EmailQueue.API.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

@@ -1,8 +1,8 @@
-using EmailQueueService.Models;
+using EmailQueue.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace EmailQueueService.Data;
+namespace EmailQueue.API.Data;
 
 public class EmailQueueDbContext(DbContextOptions<EmailQueueDbContext> options) : DbContext(options)
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EmailQueueService.Models;
+namespace EmailQueue.API.Models;
 
 public class EmailTask
 {

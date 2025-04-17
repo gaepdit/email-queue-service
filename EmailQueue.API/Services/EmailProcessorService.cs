@@ -1,8 +1,8 @@
-using EmailQueueService.Data;
-using EmailQueueService.Models;
+using EmailQueue.API.Data;
+using EmailQueue.API.Models;
 using Microsoft.Extensions.Options;
 
-namespace EmailQueueService.Services;
+namespace EmailQueue.API.Services;
 
 public class EmailProcessorService(
     IQueueService queueService,

@@ -1,12 +1,12 @@
-using EmailQueueService.Data;
-using EmailQueueService.Models;
-using EmailQueueService.Services;
+using EmailQueue.API.Data;
+using EmailQueue.API.Models;
+using EmailQueue.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
-namespace EmailQueueService.Controllers;
+namespace EmailQueue.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
