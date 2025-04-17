@@ -1,6 +1,11 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using EmailQueue.WebApp.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddHttpClient<EmailQueueApiService>();
+builder.Services.AddScoped<EmailQueueApiService>();
 
 var app = builder.Build();
 
