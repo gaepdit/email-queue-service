@@ -33,7 +33,7 @@ public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatch
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error fetching email tasks");
+            logger.LogError(ex, "Error fetching email tasks for batch {BatchId}", Id);
             ErrorMessage = "Error fetching email tasks. Please try again later.";
         }
     }
