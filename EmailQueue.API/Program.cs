@@ -44,7 +44,8 @@ builder.Services.AddDbContext<EmailQueueDbContext>(options =>
 // Configure email queue services.
 builder.Services.Configure<EmailQueueSettings>(builder.Configuration.GetSection(nameof(EmailQueueSettings)));
 builder.Services.AddSingleton<IQueueService, QueueService>();
-builder.Services.AddHostedService<EmailProcessorService>();
+builder.Services.AddHostedService<EmailQueueBackgroundService>();
+builder.Services.AddEmailServices();
 
 var app = builder.Build();
 
