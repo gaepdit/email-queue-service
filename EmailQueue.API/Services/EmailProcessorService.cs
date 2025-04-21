@@ -27,10 +27,11 @@ public class EmailProcessorService(
         {
             try
             {
-                var item = await queueService.DequeueAsync(stoppingToken);
-                if (item == null) continue;
+                var emailTask = await queueService.DequeueAsync(stoppingToken);
+                if (emailTask == null) continue;
 
-                await ProcessItemAsync(item);
+                await ProcessItemAsync(emailTask);
+
                 logger.LogInformation("Waiting {Delay} seconds before processing next task", _processingDelaySeconds);
                 await Task.Delay(TimeSpan.FromSeconds(_processingDelaySeconds), stoppingToken);
             }
@@ -40,42 +41,38 @@ public class EmailProcessorService(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing queue item");
+                logger.LogError(ex, "Failed to send email task: {Counter}", ex.Data["Counter"] ?? "Unknown");
             }
         }
     }
 
-    private async Task ProcessItemAsync(EmailTask task)
+    private async Task ProcessItemAsync(EmailTask emailTask)
     {
-        logger.LogInformation("Processing email task: {Counter}", task.Counter);
+        logger.LogInformation("Processing email task: {Counter}", emailTask.Counter);
 
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
 
-        // Get a fresh instance of the task that is tracked by this context
-        var dbTask = await dbContext.EmailTasks.FindAsync(task.Id);
+        // Get a fresh instance of the task that is tracked by this context.
+        var dbTask = await dbContext.EmailTasks.FindAsync(emailTask.Id);
         if (dbTask == null)
         {
-            logger.LogError("Task {Id} not found in database", task.Id);
+            logger.LogError("Task {Id} not found in database", emailTask.Id);
             return;
         }
 
-        dbTask.Status = "Processing";
-        await dbContext.SaveChangesAsync();
-
         try
         {
-            await EmailTask.SendEmailAsync(task);
-            dbTask.Status = "Sent";
-            dbTask.SentAt = DateTimeOffset.UtcNow;
+            await EmailTask.SendEmailAsync(emailTask);
+            dbTask.MarkAsSent();
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Successfully sent email task: {Counter}", task.Counter);
+            logger.LogInformation("Successfully sent email task: {Counter}", emailTask.Counter);
         }
         catch (Exception ex)
         {
-            dbTask.Status = "Failed";
+            dbTask.MarkAsFailed();
             await dbContext.SaveChangesAsync();
-            logger.LogError(ex, "Failed to send email task: {Counter}", task.Counter);
+            ex.Data.Add("Counter", emailTask.Counter);
             throw;
         }
     }

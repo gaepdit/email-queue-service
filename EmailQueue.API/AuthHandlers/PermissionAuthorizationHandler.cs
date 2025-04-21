@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace EmailQueue.API.Services;
+namespace EmailQueue.API.AuthHandlers;
 
 public class PermissionRequirement(string permission) : IAuthorizationRequirement
 {
