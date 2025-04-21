@@ -1,79 +1,90 @@
-using EmailQueue.API.Data;
+﻿using EmailQueue.API.Data;
 using EmailQueue.API.Models;
-using Microsoft.Extensions.Options;
+using GaEpd.EmailService;
+using GaEpd.EmailService.Utilities;
 
 namespace EmailQueue.API.Services;
 
-public class EmailProcessorService(
-    IQueueService queueService,
-    ILogger<EmailProcessorService> logger,
-    IOptions<EmailQueueSettings> settings,
-    IServiceScopeFactory scopeFactory)
-    : BackgroundService
+public interface IEmailProcessorService
 {
-    private readonly int _processingDelaySeconds = settings.Value.ProcessingDelaySeconds;
+    Task ProcessEmailAsync(EmailTask email);
+}
 
-    public override async Task StartAsync(CancellationToken cancellationToken)
-    {
-        // Initialize the queue with pending tasks from the database.
-        await queueService.InitializeQueueFromDatabase();
-        logger.LogInformation("DataProcessorService started and queue initialized.");
-        await base.StartAsync(cancellationToken);
-    }
+public class EmailProcessorService(
+    IEmailService emailService,
+    EmailQueueDbContext dbContext,
+    IConfiguration configuration,
+    ILogger<EmailProcessorService> logger)
+    : IEmailProcessorService
+{
+    private EmailServiceSettings? Settings { get; } =
+        configuration.GetSection(nameof(EmailServiceSettings)).Get<EmailServiceSettings>();
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task ProcessEmailAsync(EmailTask email)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        if (Settings is null or { EnableEmail: false, EnableEmailAuditing: false })
         {
-            try
-            {
-                var emailTask = await queueService.DequeueAsync(stoppingToken);
-                if (emailTask == null) continue;
-
-                await ProcessItemAsync(emailTask);
-
-                logger.LogInformation("Waiting {Delay} seconds before processing next task", _processingDelaySeconds);
-                await Task.Delay(TimeSpan.FromSeconds(_processingDelaySeconds), stoppingToken);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Failed to send email task: {Counter}", ex.Data["Counter"] ?? "Unknown");
-            }
+            logger.LogWarning("Emailing is not enabled on the server: {Counter}", email.Counter);
+            return;
         }
-    }
 
-    private async Task ProcessItemAsync(EmailTask emailTask)
-    {
-        logger.LogInformation("Processing email task: {Counter}", emailTask.Counter);
-
-        using var scope = scopeFactory.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
+        logger.LogInformation("Processing email: {Counter}", email.Counter);
 
         // Get a fresh instance of the task that is tracked by this context.
-        var dbTask = await dbContext.EmailTasks.FindAsync(emailTask.Id);
+        var dbTask = await dbContext.EmailTasks.FindAsync(email.Id);
         if (dbTask == null)
         {
-            logger.LogError("Task {Id} not found in database", emailTask.Id);
+            logger.LogError("Email {Id} not found in database: {Counter}", email.Id, email.Counter);
+            return;
+        }
+
+        if (email.Recipients.Count == 0 || email.Recipients.All(string.IsNullOrWhiteSpace))
+        {
+            dbTask.MarkAsFailed();
+            await dbContext.SaveChangesAsync();
+            logger.LogWarning("No recipient specified: {Counter}", email.Counter);
+            return;
+        }
+
+        Message message;
+        try
+        {
+            message = Message.Create(email.Subject, email.Recipients,
+                textBody: email.IsHtml ? null : email.Body,
+                htmlBody: email.IsHtml ? email.Body : null,
+                Settings.DefaultSenderName, Settings.DefaultSenderEmail);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unable to create an email message from {Counter}", email.Counter);
+            dbTask.MarkAsFailed();
+            await dbContext.SaveChangesAsync();
             return;
         }
 
         try
         {
-            await EmailTask.SendEmailAsync(emailTask);
-            dbTask.MarkAsSent();
-            await dbContext.SaveChangesAsync();
-            logger.LogInformation("Successfully sent email task: {Counter}", emailTask.Counter);
+            await emailService.SendEmailAsync(message);
         }
         catch (Exception ex)
         {
             dbTask.MarkAsFailed();
             await dbContext.SaveChangesAsync();
-            ex.Data.Add("Counter", emailTask.Counter);
+            ex.Data.Add("Counter", email.Counter);
             throw;
         }
+
+        dbTask.MarkAsSent();
+        await dbContext.SaveChangesAsync();
+        logger.LogInformation("Successfully sent email task: {Counter}", email.Counter);
+    }
+}
+
+public static class EmailServiceExtensions
+{
+    public static void AddEmailServices(this IServiceCollection services)
+    {
+        services.AddEmailService();
+        services.AddScoped<IEmailProcessorService, EmailProcessorService>();
     }
 }

@@ -2,7 +2,7 @@ using EmailQueue.WebApp.Platform;
 
 namespace EmailQueue.WebApp.Services;
 
-public class EmailQueueApiService(IHttpClientFactory httpClientFactory, ILogger<EmailQueueApiService> logger)
+public class EmailQueueApiService(IHttpClientFactory httpClientFactory)
 {
     public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(Guid batchId)
     {

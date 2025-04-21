@@ -63,11 +63,4 @@ public class EmailTask
             Body = resource.Body,
             IsHtml = resource.IsHtml ?? false,
         };
-
-    public static Task SendEmailAsync(EmailTask task)
-    {
-        // TODO: Replace with code to send an email.
-        Console.WriteLine($"Email {task.Counter} sent at {DateTimeOffset.UtcNow}");
-        return Task.CompletedTask;
-    }
 }
