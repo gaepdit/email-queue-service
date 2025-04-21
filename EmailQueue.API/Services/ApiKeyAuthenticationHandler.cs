@@ -14,6 +14,7 @@ public class ApiKeyAuthenticationHandler(
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     internal const string ApiKeyHeaderName = "X-API-Key";
+    internal const string PermissionClaimType = "permission";
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -37,11 +38,14 @@ public class ApiKeyAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.Fail("Invalid API Key"));
         }
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, matchingKey.Owner),
-            new Claim("ApiKeyGeneratedAt", matchingKey.GeneratedAt.ToString("O")),
+            new(ClaimTypes.Name, matchingKey.Owner),
+            new(ClaimTypes.NameIdentifier, matchingKey.Key),
+            new("ApiKeyGeneratedAt", matchingKey.GeneratedAt.ToString("O"))
         };
+
+        claims.AddRange(matchingKey.Permissions.Select(permission => new Claim(PermissionClaimType, permission)));
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);

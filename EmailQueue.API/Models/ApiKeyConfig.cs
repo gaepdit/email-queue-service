@@ -12,4 +12,7 @@ public class ApiKeyConfig
 
     [JsonPropertyName("generatedAt")]
     public DateTimeOffset GeneratedAt { get; init; }
+
+    [JsonPropertyName("permissions")]
+    public string[] Permissions { get; init; } = []; // Default to no access.
 }

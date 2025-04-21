@@ -15,7 +15,7 @@ public class EmailProcessorService(
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        // Initialize queue with pending tasks from database
+        // Initialize the queue with pending tasks from the database.
         await queueService.InitializeQueueFromDatabase();
         logger.LogInformation("DataProcessorService started and queue initialized.");
         await base.StartAsync(cancellationToken);
