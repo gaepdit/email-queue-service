@@ -18,6 +18,7 @@ public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatch
 
     public IEnumerable<EmailTaskViewModel> EmailTasks { get; private set; } = [];
     public string? ErrorMessage { get; private set; }
+    public bool ShowResults => Id.HasValue && ErrorMessage == null;
 
     [TempData]
     public string? NotificationMessage { get; set; }
@@ -41,6 +42,6 @@ public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatch
     {
         if (BatchId != null) return RedirectToPage(new { Id = BatchId });
         NotificationMessage = "Please enter a valid Batch ID to continue.";
-        return RedirectToPage();
+        return RedirectToPage("EmailBatch", new { Id = (Guid?)null });
     }
 }

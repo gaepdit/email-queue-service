@@ -4,24 +4,23 @@
     ViewData["Title"] = "Email Batch Details";
 }
 
-<div class="container">
-    <h1>@ViewData["Title"]</h1>
+<h1>@ViewData["Title"]</h1>
 
-    @if (!string.IsNullOrEmpty(Model.NotificationMessage))
-    {
-        <div class="alert alert-warning" role="alert">
-            @Model.NotificationMessage
-        </div>
-    }
+@if (!string.IsNullOrEmpty(Model.NotificationMessage))
+{
+    <div class="alert alert-warning" role="alert">
+        @Model.NotificationMessage
+    </div>
+}
 
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <div class="alert alert-danger" role="alert">
-            @Model.ErrorMessage
-        </div>
-    }
-    
-    <div class="clearfix my-4">
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+
+<div class="clearfix my-4">
     <div class="border rounded p-3 bg-light-subtle float-start">
         <form method="post" class="row row-cols-auto g-3 align-items-center">
             <div class="col">
@@ -34,43 +33,43 @@
                 <button type="submit" class="btn btn-primary">View</button>
             </div>
         </form>
-        </div>
-        </div>
+    </div>
+</div>
 
-    @if (Model.Id.HasValue)
+@if (Model.ShowResults)
+{
+    <h2 class="h4 text-secondary-emphasis">Batch ID: @Model.Id</h2>
+
+    @if (!Model.EmailTasks.Any())
     {
-        <h2 class="h4 text-secondary-emphasis">Batch ID: @Model.Id</h2>
-
-        @if (!Model.EmailTasks.Any())
-        {
-            <div class="alert alert-info">
-                No email tasks found for this Batch ID.
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
+        <div class="alert alert-info">
+            No email tasks found for this Batch ID.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Initiator</th>
+                    <th>Subject</th>
+                    <th>Recipients</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Sent</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var task in Model.EmailTasks)
+                {
                     <tr>
-                        <th>#</th>
-                        <th>Initiator</th>
-                        <th>Subject</th>
-                        <th>Recipients</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Sent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var task in Model.EmailTasks)
-                    {
-                        <tr>
-                            <td>@task.Counter</td>
-                            <td>@task.ApiKeyOwner</td>
-                            <td>@task.Subject</td>
-                            <td>@string.Join(", ", task.Recipients)</td>
-                            <td>
+                        <td>@task.Counter</td>
+                        <td>@task.ApiKeyOwner</td>
+                        <td>@task.Subject</td>
+                        <td>@string.Join(", ", task.Recipients)</td>
+                        <td>
                                 <span class="badge bg-@(task.Status switch
                                                       {
                                                           "Sent" => "success",
@@ -80,14 +79,13 @@
                                                       })">
                                     @task.Status
                                 </span>
-                            </td>
-                            <td>@task.CreatedAt.ToLocalTime().ToString("g")</td>
-                            <td>@(task.SentAt?.ToLocalTime().ToString("g") ?? "-")</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        }
+                        </td>
+                        <td>@task.CreatedAt.ToLocalTime().ToString("g")</td>
+                        <td>@(task.SentAt?.ToLocalTime().ToString("g") ?? "-")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
-</div>
+}
