@@ -61,9 +61,6 @@ public class EmailProcessorService(
             return;
         }
 
-        dbTask.MarkAsProcessing();
-        await dbContext.SaveChangesAsync();
-
         try
         {
             await EmailTask.SendEmailAsync(emailTask);

@@ -40,11 +40,6 @@ public class EmailTask
 
     public bool IsHtml { get; init; }
 
-    public void MarkAsProcessing()
-    {
-        Status = "Processing";
-    }
-
     public void MarkAsSent()
     {
         Status = "Sent";
