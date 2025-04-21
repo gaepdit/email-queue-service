@@ -1,3 +1,15 @@
+@{
+    string greeting;
+    if (User.HasClaim(claim => claim.Type == "name"))
+    {
+        var name = User.FindFirst("name")?.Value ?? "";
+        greeting = name.Contains(',') ? name.Split(',')[1] : name;
+    }
+    else
+    {
+        greeting = User.Identity?.Name?.Split('@')[0] ?? "";
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +35,20 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-page="/EmailBatch">View Batch</a>
                     </li>
+                </ul>
+                <ul class="navbar-nav">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text text-dark d-block">Hello, @greeting</span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text text-dark d-block">Not signed in</span>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

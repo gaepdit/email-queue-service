@@ -1,26 +1,22 @@
+using EmailQueue.WebApp.Platform;
+
 namespace EmailQueue.WebApp.Services;
 
-public class EmailQueueApiService(
-    IHttpClientFactory httpClientFactory,
-    IConfiguration configuration,
-    ILogger<EmailQueueApiService> logger)
+public class EmailQueueApiService(IHttpClientFactory httpClientFactory, ILogger<EmailQueueApiService> logger)
 {
-    private readonly string _baseUrl = configuration["EmailQueueApi:BaseUrl"] ?? "https://localhost:7145";
-    private readonly string _apiKey = configuration["EmailQueueApi:ApiKey"] ?? "your-secret-api-key-1";
-
     public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(Guid batchId)
     {
         try
         {
             using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
-            client.BaseAddress = new Uri(_baseUrl);
-            client.DefaultRequestHeaders.Add("X-API-Key", _apiKey);
+            client.BaseAddress = new Uri(AppSettings.EmailQueueApi.BaseUrl);
+            client.DefaultRequestHeaders.Add("X-API-Key", AppSettings.EmailQueueApi.ApiKey);
 
             using var response = await client.GetAsync($"emailTasks/list/{batchId}");
             response.EnsureSuccessStatusCode();
 
-            var emails = await response.Content.ReadFromJsonAsync<List<EmailTaskViewModel>>().ConfigureAwait(false);
-            return emails ?? Enumerable.Empty<EmailTaskViewModel>();
+            var emailTasks = await response.Content.ReadFromJsonAsync<List<EmailTaskViewModel>>().ConfigureAwait(false);
+            return emailTasks ?? [];
         }
         catch (Exception ex)
         {
