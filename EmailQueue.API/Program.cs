@@ -7,41 +7,47 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure API controllers.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    const string securityDefinitionName = "ApiKeyHeader";
-    options.AddSecurityDefinition(securityDefinitionName, new OpenApiSecurityScheme()
-    {
-        Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName,
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-    });
-    var openApiSecurityScheme = new OpenApiSecurityScheme
-        { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = securityDefinitionName } };
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement { { openApiSecurityScheme, [] }, });
-});
 
-// Configure API Key Authentication
+// Configure Swagger.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSwaggerGen(options =>
+    {
+        const string securityDefinitionName = "ApiKeyHeader";
+        options.AddSecurityDefinition(securityDefinitionName, new OpenApiSecurityScheme()
+        {
+            Name = ApiKeyAuthenticationHandler.ApiKeyHeaderName,
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+        });
+        var openApiSecurityScheme = new OpenApiSecurityScheme
+            { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = securityDefinitionName } };
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement { { openApiSecurityScheme, [] } });
+    });
+}
+
+// Configure the API Key authentication scheme.
 builder.Services.AddAuthentication(nameof(SecuritySchemeType.ApiKey))
     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(nameof(SecuritySchemeType.ApiKey), null);
 
-// Add database context
+// Configure authorization policies.
+builder.Services.AddAuthorizationPolicies();
+
+// Add database context.
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure settings
-builder.Services.Configure<EmailQueueSettings>(
-    builder.Configuration.GetSection(EmailQueueSettings.SectionName));
-
-// Register our services
+// Configure email queue.
+builder.Services.Configure<EmailQueueSettings>(builder.Configuration.GetSection(nameof(EmailQueueSettings)));
 builder.Services.AddSingleton<IQueueService, QueueService>();
 builder.Services.AddHostedService<EmailProcessorService>();
 
 var app = builder.Build();
 
-// Ensure database is created
+// Ensure the database is created.
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
@@ -54,7 +60,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
