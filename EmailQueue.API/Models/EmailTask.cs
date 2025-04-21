@@ -61,7 +61,7 @@ public class EmailTask
             Recipients = resource.Recipients,
             Subject = resource.Subject,
             Body = resource.Body,
-            IsHtml = resource.IsHtml,
+            IsHtml = resource.IsHtml ?? false,
         };
 
     public static Task SendEmailAsync(EmailTask task)

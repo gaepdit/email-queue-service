@@ -14,5 +14,5 @@ public record NewEmailTask
     [StringLength(20000)]
     public string Body { get; [UsedImplicitly] init; } = null!;
 
-    public bool IsHtml { get; [UsedImplicitly] init; }
+    public bool? IsHtml { get; [UsedImplicitly] init; }
 }
