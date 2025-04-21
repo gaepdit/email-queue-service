@@ -1,26 +1,33 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace EmailQueue.API.Models;
 
 public class EmailTask
 {
-    public Guid Id { get; set; }
-    public Guid BatchId { get; set; }
-    public int Counter { get; set; }
+    // Constructors
+    [UsedImplicitly]
+    private EmailTask() { } // Used by ORM.
+
+    internal EmailTask(Guid id) => Id = id;
+
+    // Properties
+    public Guid Id { get; }
+
+    public Guid BatchId { get; init; }
+    public int Counter { get; init; }
+
+    [StringLength(50)]
+    public string? ApiKeyOwner { get; init; }
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(15)]
-    public string Status { get; set; } = "Queued";
-
-    [StringLength(50)]
-    public string? ApiKeyOwner { get; set; }
+    public string Status { get; private set; } = "Queued";
 
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset? SentAt { get; set; }
+    public DateTimeOffset? AttemptedAt { [UsedImplicitly] get; private set; }
 
-    // User-supplied data
+    // User-supplied properties
 
     [Required(AllowEmptyStrings = false)]
+    [MaxLength(7000)]
     public List<string> Recipients { get; init; } = [];
 
     [Required(AllowEmptyStrings = false)]
@@ -32,6 +39,35 @@ public class EmailTask
     public string Body { get; init; } = null!;
 
     public bool IsHtml { get; init; }
+
+    public void MarkAsProcessing()
+    {
+        Status = "Processing";
+    }
+
+    public void MarkAsSent()
+    {
+        Status = "Sent";
+        AttemptedAt = DateTimeOffset.UtcNow;
+    }
+
+    public void MarkAsFailed()
+    {
+        Status = "Failed";
+        AttemptedAt = DateTimeOffset.UtcNow;
+    }
+
+    public static EmailTask Create(NewEmailTask resource, Guid batchId, string apiKeyOwner, int counter) =>
+        new(Guid.NewGuid())
+        {
+            BatchId = batchId,
+            Counter = counter,
+            ApiKeyOwner = apiKeyOwner,
+            Recipients = resource.Recipients,
+            Subject = resource.Subject,
+            Body = resource.Body,
+            IsHtml = resource.IsHtml,
+        };
 
     public static Task SendEmailAsync(EmailTask task)
     {

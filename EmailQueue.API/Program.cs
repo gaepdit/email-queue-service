@@ -1,3 +1,4 @@
+using EmailQueue.API.AuthHandlers;
 using EmailQueue.API.Data;
 using EmailQueue.API.Models;
 using EmailQueue.API.Services;
@@ -40,7 +41,7 @@ builder.Services.AddAuthorizationPolicies();
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure email queue.
+// Configure email queue services.
 builder.Services.Configure<EmailQueueSettings>(builder.Configuration.GetSection(nameof(EmailQueueSettings)));
 builder.Services.AddSingleton<IQueueService, QueueService>();
 builder.Services.AddHostedService<EmailProcessorService>();

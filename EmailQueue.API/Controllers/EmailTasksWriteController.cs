@@ -1,3 +1,4 @@
+using EmailQueue.API.AuthHandlers;
 using EmailQueue.API.Models;
 using EmailQueue.API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace EmailQueue.API.Controllers;
 public class EmailTasksWriteController(IQueueService queueService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> EnqueueEmailsAsync([FromBody] EmailTask[] emailTasks)
+    public async Task<IActionResult> EnqueueEmailsAsync([FromBody] NewEmailTask[] emailTasks)
     {
         var emptySubmissionResult = new { status = "Empty", message = "No email tasks submitted.", count = 0 };
         if (emailTasks.Length == 0) return Ok(emptySubmissionResult);

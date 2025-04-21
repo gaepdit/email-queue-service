@@ -7,7 +7,7 @@ namespace EmailQueue.API.Services;
 
 public interface IQueueService
 {
-    Task<Guid?> EnqueueItems(IEnumerable<EmailTask> emailTasks, string apiKeyOwner);
+    Task<Guid?> EnqueueItems(NewEmailTask[] newEmailTasks, string apiKeyOwner);
     Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken);
     Task InitializeQueueFromDatabase();
 }
@@ -38,43 +38,37 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
         logger.LogInformation("Initialized queue with {Count} pending tasks from database", pendingTasks.Count);
     }
 
-    public async Task<Guid?> EnqueueItems(IEnumerable<EmailTask> emailTasks, string apiKeyOwner)
+    public async Task<Guid?> EnqueueItems(NewEmailTask[] newEmailTasks, string apiKeyOwner)
     {
-        var emailTasksArray = emailTasks as EmailTask[] ?? emailTasks.ToArray();
-        if (emailTasksArray.Length == 0) return null;
+        if (newEmailTasks.Length == 0) return null;
 
+        // Create new entities.
+        var batchId = Guid.NewGuid();
+        var emailTasksList = newEmailTasks
+            .Select(task => EmailTask.Create(task, batchId, apiKeyOwner, Interlocked.Increment(ref _currentCounter)))
+            .ToList();
+
+        // Save new items to the database.
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<EmailQueueDbContext>();
-
-        var batchId = Guid.NewGuid();
-
-        foreach (var item in emailTasksArray)
-        {
-            // Initialize all task properties
-            item.Id = Guid.NewGuid();
-            item.BatchId = batchId;
-            item.Counter = Interlocked.Increment(ref _currentCounter);
-            item.ApiKeyOwner = apiKeyOwner;
-        }
-
-        await dbContext.EmailTasks.AddRangeAsync(emailTasksArray);
+        await dbContext.EmailTasks.AddRangeAsync(emailTasksList);
         await dbContext.SaveChangesAsync();
 
-        // Enqueue items in memory after they're saved to the database
-        foreach (var item in emailTasksArray)
+        // Enqueue items in memory after they're saved to the database.
+        foreach (var item in emailTasksList)
         {
             _queue.Enqueue(item);
             _signal.Release();
         }
 
-        logger.LogInformation("Enqueued {Count} new email tasks", emailTasksArray.Length);
+        logger.LogInformation("Enqueued {Count} new email tasks", emailTasksList.Count);
         return batchId;
     }
 
     public async Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken)
     {
         await _signal.WaitAsync(cancellationToken);
-        _queue.TryDequeue(out var item);
-        return item;
+        _queue.TryDequeue(out var emailTask);
+        return emailTask;
     }
 }

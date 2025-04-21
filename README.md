@@ -33,7 +33,7 @@ keys are configured in `appsettings.json`.
   "ApiKeys": [
     {
       "key": "your-secret-api-key-1",
-      "owner": "Batch Viewer Web Application",
+      "owner": "Your Web Application",
       "generatedAt": "2025-04-15T00:00:00Z"
     }
   ]

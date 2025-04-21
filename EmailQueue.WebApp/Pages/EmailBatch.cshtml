@@ -81,7 +81,7 @@
                                 </span>
                         </td>
                         <td>@task.CreatedAt.ToLocalTime().ToString("g")</td>
-                        <td>@(task.SentAt?.ToLocalTime().ToString("g") ?? "-")</td>
+                        <td>@(task.AttemptedAt?.ToLocalTime().ToString("g") ?? "-")</td>
                     </tr>
                 }
                 </tbody>

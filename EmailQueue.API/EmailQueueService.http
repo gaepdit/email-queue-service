@@ -1,13 +1,13 @@
 @EmailQueue_HostAddress = https://localhost:7145
-@ApiKey = your-secret-api-key-1
-@InvalidApiKey = invalid-api-key
+@ApiReadKey = api-read-key-1
+@ApiWriteKey = api-write-key-2
 
 ###
 
 # @name addTasks
 POST {{EmailQueue_HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiKey}}
+X-API-Key: {{ApiWriteKey}}
 
 [
   {
@@ -48,34 +48,39 @@ X-API-Key: {{ApiKey}}
 
 @batchId = {{addTasks.response.body.batchId}}
 
+# List all email tasks for returned batch ID.
 GET {{EmailQueue_HostAddress}}/emailTasks/list/{{batchId}}
 Content-Type: application/json
-X-API-Key: {{ApiKey}}
+X-API-Key: {{ApiReadKey}}
 
 ###
 
+# Post an empty array.
 POST {{EmailQueue_HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiKey}}
+X-API-Key: {{ApiWriteKey}}
 
 []
 
 ###
 
+# List all email tasks.
 GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
-X-API-Key: {{ApiKey}}
+X-API-Key: {{ApiReadKey}}
 
 ###
 
+# This should fail because of the incorrect API key.
 GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
-X-API-Key: {{InvalidApiKey}}
+X-API-Key: {{ApiWriteKey}}
 
 ###
 
+# This should fail because of the incorrect API key.
 POST {{EmailQueue_HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{InvalidApiKey}}
+X-API-Key: {{ApiReadKey}}
 
 []

@@ -20,11 +20,11 @@ public class EmailQueueApiService(IHttpClientFactory httpClientFactory, ILogger<
 
 public record EmailTaskViewModel
 {
-    public int Counter { get; init; }
-    public required string Status { get; init; }
-    public string? ApiKeyOwner { get; init; }
-    public DateTimeOffset CreatedAt { get; init; }
-    public DateTimeOffset? SentAt { get; init; }
-    public List<string> Recipients { get; init; } = [];
-    public required string Subject { get; init; }
+    public int Counter { get; [UsedImplicitly] init; }
+    public required string Status { get; [UsedImplicitly] init; }
+    public string? ApiKeyOwner { get; [UsedImplicitly] init; }
+    public DateTimeOffset CreatedAt { get; [UsedImplicitly] init; }
+    public DateTimeOffset? AttemptedAt { get; [UsedImplicitly] init; }
+    [UsedImplicitly] public List<string> Recipients { get; init; } = [];
+    public required string Subject { get; [UsedImplicitly] init; }
 }

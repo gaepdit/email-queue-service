@@ -19,6 +19,6 @@ public static class AppSettings
 
 public record EmailQueueApi
 {
-    public string BaseUrl { get; init; } = null!;
-    public string ApiKey { get; init; } = null!;
+    public string BaseUrl { get; [UsedImplicitly] init; } = null!;
+    public string ApiKey { get; [UsedImplicitly] init; } = null!;
 }
