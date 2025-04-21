@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/EmailQueue.API/EmailQueue.API.csproj"
+        },
+        {
+            "name": "Web App",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/EmailQueue.WebApp/EmailQueue.WebApp.csproj"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "API + Web App",
+            "configurations": [
+                "API",
+                "Web App"
+            ]
+        }
+    ]
+}
