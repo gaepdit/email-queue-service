@@ -64,7 +64,7 @@ public class EmailProcessorService(
 
         try
         {
-            _ = emailService.SendEmailAsync(message);
+            await emailService.SendEmailAsync(message);
         }
         catch (Exception ex)
         {
