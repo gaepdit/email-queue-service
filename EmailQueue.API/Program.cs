@@ -5,6 +5,8 @@ using EmailQueue.API.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Mindscape.Raygun4Net.AspNetCore;
+using Mindscape.Raygun4Net.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,14 @@ builder.Services.AddSingleton<IQueueService, QueueService>();
 builder.Services.AddHostedService<EmailQueueBackgroundService>();
 builder.Services.AddEmailServices();
 
+// Configure application crash monitoring.
+builder.Services.AddRaygun(builder.Configuration);
+builder.Logging.AddRaygunLogger(options =>
+{
+    options.MinimumLogLevel = LogLevel.Warning;
+    options.OnlyLogExceptions = false;
+});
+
 var app = builder.Build();
 
 // Ensure the database is created.
@@ -62,6 +72,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRaygun();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -24,7 +24,7 @@ public class EmailProcessorService(
     {
         if (Settings is null or { EnableEmail: false, EnableEmailAuditing: false })
         {
-            logger.LogWarning("Emailing is not enabled on the server: {Counter}", email.Counter);
+            logger.LogWarning("Emailing is not enabled on the server");
             return;
         }
 
