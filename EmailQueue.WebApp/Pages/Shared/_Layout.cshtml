@@ -1,3 +1,4 @@
+@using EmailQueue.WebApp.Platform
 @{
     string greeting;
     if (User.HasClaim(claim => claim.Type == "name"))
@@ -61,6 +62,15 @@
 <footer class="border-top footer text-muted">
     <div class="container">
         Email Batch Viewer &copy; 2025 State of Georgia
+        @if (!string.IsNullOrEmpty(AppSettings.InformationalVersion))
+        {
+            <span class="d-print-none">| Current version: @AppSettings.InformationalVersion
+                @if (!string.IsNullOrEmpty(AppSettings.InformationalBuild))
+                {
+                    @:(@AppSettings.InformationalBuild)
+                }
+            </span>
+        }
     </div>
 </footer>
 
