@@ -1,0 +1,94 @@
+# See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
+
+@EmailQueue_HostAddress = https://localhost:7145
+@ApiReadKey = api-read-key-1
+@ApiWriteKey = api-write-key-2
+
+###
+
+# @name addTasks
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{ApiWriteKey}}
+
+[
+  {
+    "recipients": [
+      "test1@example.com",
+      "test1cc@example.com"
+    ],
+    "subject": "Test Email 1",
+    "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
+    "isHtml": true
+  },
+  {
+    "recipients": [
+      "test2@example.com"
+    ],
+    "subject": "Test Email 2",
+    "body": "Plain text content for email 2"
+  },
+  {
+    "recipients": [
+      "test3@example.com",
+      "test3cc@example.com"
+    ],
+    "subject": "Test Email 3",
+    "body": "<h1>Test Email 3</h1><p>HTML content for email 3</p>",
+    "isHtml": true
+  },
+  {
+    "recipients": [
+      "test4@example.com"
+    ],
+    "subject": "Test Email 4",
+    "body": "Plain text content for email 4"
+  }
+]
+
+> {% client.global.set("batchId", response.body.batchId); %}
+
+###
+
+# List all email tasks for returned batch ID.
+GET {{EmailQueue_HostAddress}}/emailTasks/list/{{batchId}}
+Content-Type: application/json
+X-API-Key: {{ApiReadKey}}
+
+###
+
+# Post an empty array.
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{ApiWriteKey}}
+
+[]
+
+###
+
+# List all email tasks.
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json
+X-API-Key: {{ApiReadKey}}
+
+###
+
+# This should fail (HTTP 403) because of the incorrect API key.
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json
+X-API-Key: {{ApiWriteKey}}
+
+###
+
+# This should fail (HTTP 403) because of the incorrect API key.
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{ApiReadKey}}
+
+[]
+
+###
+
+# This should fail (HTTP 401) because of the missing API key.
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json
