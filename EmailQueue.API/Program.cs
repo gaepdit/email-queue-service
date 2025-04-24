@@ -1,7 +1,7 @@
 using EmailQueue.API.AuthHandlers;
 using EmailQueue.API.Data;
-using EmailQueue.API.Models;
 using EmailQueue.API.Services;
+using EmailQueue.API.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -9,6 +9,9 @@ using Mindscape.Raygun4Net.AspNetCore;
 using Mindscape.Raygun4Net.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Populate application settings.
+builder.BindAppSettings();
 
 // Configure API controllers.
 builder.Services.AddControllers();
@@ -44,9 +47,8 @@ builder.Services.AddDbContext<EmailQueueDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure email queue services.
-builder.Services.Configure<EmailQueueSettings>(builder.Configuration.GetSection(nameof(EmailQueueSettings)));
 builder.Services.AddSingleton<IQueueService, QueueService>();
-builder.Services.AddHostedService<EmailQueueBackgroundService>();
+builder.Services.AddHostedService<QueueBackgroundService>();
 builder.Services.AddEmailServices();
 
 // Configure application crash monitoring.

@@ -1,4 +1,4 @@
-using EmailQueue.API.Models;
+using EmailQueue.API.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -9,8 +9,7 @@ namespace EmailQueue.API.AuthHandlers;
 public class ApiKeyAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
-    UrlEncoder encoder,
-    IConfiguration configuration)
+    UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     internal const string ApiKeyHeaderName = "X-API-Key";
@@ -30,8 +29,7 @@ public class ApiKeyAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.Fail("API Key is empty"));
         }
 
-        var apiKeys = configuration.GetSection("ApiKeys").Get<List<ApiKeyConfig>>();
-        var matchingKey = apiKeys?.FirstOrDefault(k => k.Key == providedApiKey);
+        var matchingKey = AppSettings.ApiKeys.FirstOrDefault(k => k.Key == providedApiKey);
 
         if (matchingKey == null)
         {
@@ -42,7 +40,7 @@ public class ApiKeyAuthenticationHandler(
         {
             new(ClaimTypes.Name, matchingKey.Owner),
             new(ClaimTypes.NameIdentifier, matchingKey.Key),
-            new("ApiKeyGeneratedAt", matchingKey.GeneratedAt.ToString("O"))
+            new("ApiKeyGeneratedAt", matchingKey.GeneratedAt.ToString("O")),
         };
 
         claims.AddRange(matchingKey.Permissions.Select(permission => new Claim(PermissionClaimType, permission)));
