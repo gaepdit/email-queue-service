@@ -1,8 +1,8 @@
 ﻿using EmailQueue.WebApp.Platform;
 using EmailQueue.WebApp.Platform.Authentication;
+using EmailQueue.WebApp.Platform.DataProtection;
 using EmailQueue.WebApp.Platform.Logging;
 using EmailQueue.WebApp.Services;
-using Microsoft.AspNetCore.DataProtection;
 using Mindscape.Raygun4Net.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,12 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Populate application settings.
 builder.BindSettings();
 
+// Persist data protection keys.
+await builder.AddDataProtectionServices();
+
 // Configure authentication.
 builder.AddAuthenticationServices();
-
-// Persist data protection keys.
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(Directory.CreateDirectory(AppSettings.DataProtectionKeysFolder));
 
 // Configure the EmailQueue API.
 builder.Services.AddHttpClient<EmailQueueApiService>();
