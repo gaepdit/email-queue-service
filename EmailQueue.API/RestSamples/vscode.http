@@ -1,3 +1,5 @@
+# See https://marketplace.visualstudio.com/items/?itemName=humao.rest-client
+
 @EmailQueue_HostAddress = https://localhost:7145
 @ApiReadKey = api-read-key-1
 @ApiWriteKey = api-write-key-2
@@ -64,23 +66,22 @@ X-API-Key: {{ApiWriteKey}}
 
 ###
 
-# List all email tasks.
-GET {{EmailQueue_HostAddress}}/emailTasks/list
-Content-Type: application/json
-X-API-Key: {{ApiReadKey}}
-
-###
-
-# This should fail because of the incorrect API key.
+# This should fail (HTTP 403) because of the incorrect API key.
 GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
 ###
 
-# This should fail because of the incorrect API key.
+# This should fail (HTTP 403) because of the incorrect API key.
 POST {{EmailQueue_HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiReadKey}}
 
 []
+
+###
+
+# This should fail (HTTP 401) because of the missing API key.
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json

@@ -1,17 +1,13 @@
-using EmailQueue.API.Models;
-using Microsoft.Extensions.Options;
+using EmailQueue.API.Settings;
 
 namespace EmailQueue.API.Services;
 
-public class EmailQueueBackgroundService(
+public class QueueBackgroundService(
     IQueueService queueService,
-    ILogger<EmailQueueBackgroundService> logger,
-    IOptions<EmailQueueSettings> settings,
+    ILogger<QueueBackgroundService> logger,
     IServiceScopeFactory scopeFactory)
     : BackgroundService
 {
-    private readonly int _processingDelaySeconds = settings.Value.ProcessingDelaySeconds;
-
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         // Initialize the queue with pending tasks from the database.
@@ -33,8 +29,9 @@ public class EmailQueueBackgroundService(
                 var emailService = scope.ServiceProvider.GetRequiredService<IEmailProcessorService>();
                 await emailService.ProcessEmailAsync(emailTask);
 
-                logger.LogInformation("Waiting {Delay} seconds before processing next task", _processingDelaySeconds);
-                await Task.Delay(TimeSpan.FromSeconds(_processingDelaySeconds), stoppingToken);
+                logger.LogInformation("Waiting {Delay} seconds before processing next task",
+                    AppSettings.QueueSettings.ProcessingDelaySeconds);
+                await Task.Delay(TimeSpan.FromSeconds(AppSettings.QueueSettings.ProcessingDelaySeconds), stoppingToken);
             }
             catch (OperationCanceledException)
             {

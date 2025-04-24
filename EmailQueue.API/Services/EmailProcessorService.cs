@@ -1,5 +1,6 @@
 ﻿using EmailQueue.API.Data;
 using EmailQueue.API.Models;
+using EmailQueue.API.Settings;
 using GaEpd.EmailService;
 using GaEpd.EmailService.Utilities;
 
@@ -13,16 +14,12 @@ public interface IEmailProcessorService
 public class EmailProcessorService(
     IEmailService emailService,
     EmailQueueDbContext dbContext,
-    IConfiguration configuration,
     ILogger<EmailProcessorService> logger)
     : IEmailProcessorService
 {
-    private EmailServiceSettings? Settings { get; } =
-        configuration.GetSection(nameof(EmailServiceSettings)).Get<EmailServiceSettings>();
-
     public async Task ProcessEmailAsync(EmailTask email)
     {
-        if (Settings is null or { EnableEmail: false, EnableEmailAuditing: false })
+        if (AppSettings.EmailServiceSettings is { EnableEmail: false, EnableEmailAuditing: false })
         {
             logger.LogWarning("Emailing is not enabled on the server");
             return;
@@ -49,10 +46,12 @@ public class EmailProcessorService(
         Message message;
         try
         {
-            message = Message.Create(email.Subject, email.Recipients,
+            message = Message.Create(email.Subject,
+                email.Recipients,
                 textBody: email.IsHtml ? null : email.Body,
                 htmlBody: email.IsHtml ? email.Body : null,
-                Settings.DefaultSenderName, Settings.DefaultSenderEmail);
+                AppSettings.EmailServiceSettings.DefaultSenderName,
+                AppSettings.EmailServiceSettings.DefaultSenderEmail);
         }
         catch (Exception ex)
         {
