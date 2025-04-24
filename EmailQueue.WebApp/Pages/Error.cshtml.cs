@@ -17,15 +17,18 @@ public class ErrorModel(ILogger<ErrorModel> logger) : PageModel
     {
         if (statusCode is null)
         {
-            logger.LogError("Error page shown from Get method");
+            logger.LogInformation("Error page shown from Get method");
         }
         else
         {
-            logger.LogError("Error page shown from Get method with status code {StatusCode}", statusCode);
+            logger.LogInformation("Error page shown from Get method with status code {StatusCode}", statusCode);
         }
 
         Status = statusCode;
     }
 
-    public void OnPost() => logger.LogError("Error page shown from Post method");
+    public void OnPost()
+    {
+        logger.LogInformation("Error page shown from Post method");
+    }
 }

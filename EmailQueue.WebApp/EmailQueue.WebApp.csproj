@@ -10,6 +10,8 @@
         <PackageReference Include="Microsoft.Identity.Web" />
         <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" />
         <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
+        <PackageReference Include="Mindscape.Raygun4Net.AspNetCore" />
+        <PackageReference Include="Mindscape.Raygun4Net.Extensions.Logging" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,6 +21,9 @@
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         </Content>
         <None Include="../README.md" />
+        <Content Update="appsettings.Development.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
     </ItemGroup>
 
 </Project>

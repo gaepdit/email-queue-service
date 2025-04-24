@@ -12,6 +12,8 @@
     <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.8.3" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="3.8.3" />
     <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
+    <PackageVersion Include="Mindscape.Raygun4Net.AspNetCore" Version="11.2.2" />
+    <PackageVersion Include="Mindscape.Raygun4Net.Extensions.Logging" Version="11.2.2" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.8.0.113526" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
