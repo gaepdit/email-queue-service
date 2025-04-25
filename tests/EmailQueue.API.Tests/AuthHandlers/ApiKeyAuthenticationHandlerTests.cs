@@ -99,7 +99,6 @@ public class ApiKeyAuthenticationHandlerTests
             Key = apiKey,
             Owner = "Test Owner",
             Permissions = ["read", "write"],
-            GeneratedAt = DateTimeOffset.UtcNow,
         };
 
         AppSettings.ApiKeys.Clear();
@@ -117,8 +116,6 @@ public class ApiKeyAuthenticationHandlerTests
         Debug.Assert(identity != null);
         identity.Claims.Should().Contain(c => c.Type == ClaimTypes.Name && c.Value == testKey.Owner);
         identity.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier && c.Value == testKey.Key);
-        identity.Claims.Should()
-            .Contain(c => c.Type == "ApiKeyGeneratedAt" && c.Value == testKey.GeneratedAt.ToString("O"));
         identity.Claims.Should()
             .Contain(c => c.Type == ApiKeyAuthenticationHandler.PermissionClaimType && c.Value == "read");
         identity.Claims.Should()

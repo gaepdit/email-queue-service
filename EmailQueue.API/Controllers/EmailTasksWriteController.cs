@@ -16,13 +16,13 @@ public class EmailTasksWriteController(IQueueService queueService) : ControllerB
     [HttpPost]
     public async Task<IActionResult> EnqueueEmailsAsync([FromBody] NewEmailTask[] emailTasks)
     {
-        var emptySubmissionResult = new { status = "Empty", message = "No email tasks submitted.", count = 0 };
+        var emptySubmissionResult = new { status = "Empty", count = 0, batchId = string.Empty };
         if (emailTasks.Length == 0) return Ok(emptySubmissionResult);
 
         var batchId = await queueService.EnqueueItems(emailTasks, User.Identity?.Name ?? "[unknown]");
 
         return batchId == null
             ? Ok(emptySubmissionResult)
-            : Ok(new { status = "Success", message = "Emails have been queued.", count = emailTasks.Length, batchId });
+            : Ok(new { status = "Success", count = emailTasks.Length, batchId });
     }
 }

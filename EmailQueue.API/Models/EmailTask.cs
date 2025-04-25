@@ -1,12 +1,12 @@
 namespace EmailQueue.API.Models;
 
-public class EmailTask
+public record EmailTask : NewEmailTask
 {
     // Constructors
     [UsedImplicitly]
     private EmailTask() { } // Used by ORM.
 
-    internal EmailTask(Guid id) => Id = id;
+    private EmailTask(Guid id) => Id = id;
 
     // Properties
     public Guid Id { get; }
@@ -24,22 +24,7 @@ public class EmailTask
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime? AttemptedAt { [UsedImplicitly] get; private set; }
 
-    // User-supplied properties
-
-    [Required(AllowEmptyStrings = false)]
-    [MaxLength(7000)]
-    public List<string> Recipients { get; init; } = [];
-
-    [Required(AllowEmptyStrings = false)]
-    [StringLength(200)]
-    public string Subject { get; init; } = null!;
-
-    [Required(AllowEmptyStrings = false)]
-    [StringLength(20000)]
-    public string Body { get; init; } = null!;
-
-    public bool IsHtml { get; init; }
-
+    // Methods
     public void MarkAsSent()
     {
         Status = "Sent";
@@ -53,14 +38,15 @@ public class EmailTask
     }
 
     public static EmailTask Create(NewEmailTask resource, Guid batchId, string apiKeyOwner, int counter) =>
-        new(Guid.NewGuid())
+        new(id: Guid.NewGuid())
         {
             BatchId = batchId,
             Counter = counter,
             ApiKeyOwner = apiKeyOwner,
             Recipients = resource.Recipients,
+            From = resource.From,
             Subject = resource.Subject,
             Body = resource.Body,
-            IsHtml = resource.IsHtml ?? false,
+            IsHtml = resource.IsHtml,
         };
 }

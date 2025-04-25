@@ -25,8 +25,8 @@ public class EmailProcessorServiceTests
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 { "EmailServiceSettings:EnableEmail", "true" },
-                { "EmailServiceSettings:DefaultSenderEmail", "test@example.com" },
-                { "EmailServiceSettings:DefaultSenderName", "Test Sender" },
+                { "EmailServiceSettings:DefaultSenderEmail", "default@example.com" },
+                { "EmailServiceSettings:DefaultSenderName", "Default Sender" },
             }).Build().GetSection(nameof(AppSettings.EmailServiceSettings))
             .Bind(AppSettings.EmailServiceSettings);
 
@@ -54,15 +54,16 @@ public class EmailProcessorServiceTests
         _dbContext.Dispose();
     }
 
-    private static EmailTask CreateEmailTask() => new(Guid.NewGuid())
-    {
-        BatchId = Guid.NewGuid(),
-        Counter = 1,
-        Recipients = ["test@example.com"],
-        Subject = "Test Subject",
-        Body = "Test Body",
-        IsHtml = false,
-    };
+    private static EmailTask CreateEmailTask() => EmailTask.Create(
+        new NewEmailTask
+        {
+            Body = "Test Body",
+            Recipients = ["test@example.com"],
+            From = "test@example.com",
+            Subject = "Test Subject",
+            IsHtml = false,
+        },
+        batchId: Guid.NewGuid(), apiKeyOwner: "Test Owner", counter: 1);
 
     [Test]
     public async Task ProcessEmailAsync_WhenEmailingDisabled_LogsWarningAndReturns()
@@ -145,6 +146,7 @@ public class EmailProcessorServiceTests
         await _emailService.Received(1).SendEmailAsync(Arg.Is<Message>(m =>
             m.Subject == _emailTask.Subject &&
             m.Recipients.Contains(_emailTask.Recipients[0]) &&
+            m.SenderEmail == _emailTask.From &&
             m.TextBody == _emailTask.Body &&
             m.HtmlBody == null));
         _logger.Received().Log(LogLevel.Information, Arg.Any<EventId>(), Arg.Any<object>(), null,

@@ -33,8 +33,7 @@ keys are configured in `appsettings.json`.
   "ApiKeys": [
     {
       "key": "your-secret-api-key-1",
-      "owner": "Your Web Application",
-      "generatedAt": "2025-04-15T00:00:00Z"
+      "owner": "Your Web Application"
     }
   ]
 }
@@ -54,6 +53,7 @@ Request body: Array of email tasks
     "recipients": [
       "email@example.com"
     ],
+    "from": "from.email@example.net",
     "subject": "Email Subject",
     "body": "Email content",
     "isHtml": false
@@ -64,18 +64,29 @@ Request body: Array of email tasks
 Each email task contains the following properties:
 
 - `recipients`: List of email addresses (Required)
+- `from`: The return (from) email address (Required, but may be empty. If empty, the `DefaultSenderEmail` address from
+  the `EmailServiceSettings` is used)
 - `subject`: Email subject line, max 200 characters (Required)
 - `body`: Email content, max 20,000 characters (Required)
-- `isHtml`: Boolean indicating if the body is formatted as HTML (Optional, defaults to false)
+- `isHtml`: Boolean indicating if the body is formatted as HTML (Required)
 
-Response:
+Response if successful:
 
 ```json
 {
   "status": "Success",
-  "message": "Emails have been queued.",
   "count": 1,
   "batchId": "guid-of-batch"
+}
+```
+
+If no email tasks are submitted, the following response will be returned:
+
+```json
+{
+  "status": "Empty",
+  "count": 0,
+  "batchId": ""
 }
 ```
 

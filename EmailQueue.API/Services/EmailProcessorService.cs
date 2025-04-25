@@ -46,12 +46,10 @@ public class EmailProcessorService(
         Message message;
         try
         {
-            message = Message.Create(email.Subject,
-                email.Recipients,
+            message = Message.Create(email.Subject, email.Recipients,
                 textBody: email.IsHtml ? null : email.Body,
                 htmlBody: email.IsHtml ? email.Body : null,
-                AppSettings.EmailServiceSettings.DefaultSenderName,
-                AppSettings.EmailServiceSettings.DefaultSenderEmail);
+                senderEmail: string.IsNullOrWhiteSpace(email.From) ? null : email.From);
         }
         catch (Exception ex)
         {

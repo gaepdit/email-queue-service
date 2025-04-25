@@ -2,8 +2,4 @@
     <ItemGroup>
       <ProjectReference Include="..\..\EmailQueue.API\EmailQueue.API.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
-    </ItemGroup>
 </Project>

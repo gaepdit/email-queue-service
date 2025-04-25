@@ -40,7 +40,6 @@ public class ApiKeyAuthenticationHandler(
         {
             new(ClaimTypes.Name, matchingKey.Owner),
             new(ClaimTypes.NameIdentifier, matchingKey.Key),
-            new("ApiKeyGeneratedAt", matchingKey.GeneratedAt.ToString("O")),
         };
 
         claims.AddRange(matchingKey.Permissions.Select(permission => new Claim(PermissionClaimType, permission)));
