@@ -7,12 +7,12 @@ namespace EmailQueue.API.Tests.AuthHandlers;
 [TestFixture]
 public class PermissionAuthorizationHandlerTests
 {
-    private PermissionAuthorizationHandler _handler;
+    private PermissionAuthorizationHandler _sut;
     private readonly Claim _readClaim = new(ApiKeyAuthenticationHandler.PermissionClaimType, "read");
     private readonly Claim _writeClaim = new(ApiKeyAuthenticationHandler.PermissionClaimType, "write");
 
     [SetUp]
-    public void Setup() => _handler = new PermissionAuthorizationHandler();
+    public void Setup() => _sut = new PermissionAuthorizationHandler();
 
     [Test]
     public async Task HandleRequirementAsync_UserHasMatchingPermission_SucceedsRequirement()
@@ -23,7 +23,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([requirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeTrue();
@@ -38,7 +38,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([requirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeFalse();
@@ -53,7 +53,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([requirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeFalse();
@@ -71,8 +71,8 @@ public class PermissionAuthorizationHandlerTests
         var writeContext = new AuthorizationHandlerContext([writeRequirement], user, null);
 
         // Act
-        await _handler.HandleAsync(readContext);
-        await _handler.HandleAsync(writeContext);
+        await _sut.HandleAsync(readContext);
+        await _sut.HandleAsync(writeContext);
 
         // Assert
         using var scope = new AssertionScope();
@@ -88,7 +88,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([requirement], null!, null);
 
         // Act
-        var func = async () => await _handler.HandleAsync(context);
+        var func = async () => await _sut.HandleAsync(context);
 
         // Act & Assert
         func.Should().ThrowAsync<NullReferenceException>();
@@ -102,7 +102,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext(requirements: [], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeFalse();
@@ -119,7 +119,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([requirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeTrue();
@@ -135,7 +135,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([readRequirement, writeRequirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeFalse();
@@ -151,7 +151,7 @@ public class PermissionAuthorizationHandlerTests
         var context = new AuthorizationHandlerContext([readRequirement, writeRequirement], user, null);
 
         // Act
-        await _handler.HandleAsync(context);
+        await _sut.HandleAsync(context);
 
         // Assert
         context.HasSucceeded.Should().BeTrue();

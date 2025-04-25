@@ -11,11 +11,11 @@ namespace EmailQueue.API.Tests.Services;
 
 public class EmailProcessorServiceTests
 {
-    private IEmailService _emailService = null!;
-    private EmailQueueDbContext _dbContext = null!;
-    private ILogger<EmailProcessorService> _logger = null!;
-    private EmailProcessorService _sut = null!;
-    private EmailTask _emailTask = null!;
+    private EmailProcessorService _sut;
+    private IEmailService _emailService;
+    private EmailQueueDbContext _dbContext;
+    private ILogger<EmailProcessorService> _logger;
+    private EmailTask _emailTask;
 
     [SetUp]
     public void Setup()
