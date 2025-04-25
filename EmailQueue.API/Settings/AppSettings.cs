@@ -31,5 +31,4 @@ public class ApiKeyConfig
     public string Key { get; init; } = null!;
     public string Owner { get; init; } = null!;
     public string[] Permissions { get; init; } = []; // Default to no access.
-    public DateTimeOffset GeneratedAt { get; init; }
 }
