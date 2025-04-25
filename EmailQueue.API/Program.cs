@@ -44,7 +44,7 @@ builder.Services.AddAuthorizationPolicies();
 
 // Add database context.
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure email queue services.
 builder.Services.AddSingleton<IQueueService, QueueService>();
