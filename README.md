@@ -75,7 +75,6 @@ Response if successful:
 ```json
 {
   "status": "Success",
-  "message": "Emails have been queued.",
   "count": 1,
   "batchId": "guid-of-batch"
 }
@@ -86,8 +85,8 @@ If no email tasks are submitted, the following response will be returned:
 ```json
 {
   "status": "Empty",
-  "message": "No email tasks submitted.",
-  "count": 0
+  "count": 0,
+  "batchId": ""
 }
 ```
 
