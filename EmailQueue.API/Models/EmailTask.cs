@@ -61,6 +61,6 @@ public class EmailTask
             Recipients = resource.Recipients,
             Subject = resource.Subject,
             Body = resource.Body,
-            IsHtml = resource.IsHtml ?? false,
+            IsHtml = resource.IsHtml,
         };
 }

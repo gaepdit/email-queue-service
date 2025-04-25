@@ -65,7 +65,7 @@ Each email task contains the following properties:
 - `recipients`: List of email addresses (Required)
 - `subject`: Email subject line, max 200 characters (Required)
 - `body`: Email content, max 20,000 characters (Required)
-- `isHtml`: Boolean indicating if the body is formatted as HTML (Optional, defaults to false)
+- `isHtml`: Boolean indicating if the body is formatted as HTML (Required)
 
 Response:
 
