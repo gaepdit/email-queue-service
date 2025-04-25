@@ -17,7 +17,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
     {
         if (context.User.HasClaim(claim =>
                 claim.Type == ApiKeyAuthenticationHandler.PermissionClaimType &&
-                claim.Value == requirement.Permission))
+                claim.Value.Equals(requirement.Permission, StringComparison.CurrentCultureIgnoreCase)))
         {
             context.Succeed(requirement);
         }
