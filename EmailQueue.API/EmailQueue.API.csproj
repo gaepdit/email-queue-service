@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="../README.md" />
         <Content Update="appsettings.Development.json">
             <DependentUpon>appsettings.json</DependentUpon>
         </Content>
