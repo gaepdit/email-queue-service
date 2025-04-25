@@ -17,6 +17,7 @@ X-API-Key: {{ApiWriteKey}}
       "test1@example.com",
       "test1cc@example.com"
     ],
+    "from": "test.from@example.net",
     "subject": "Test Email 1",
     "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
     "isHtml": true
@@ -25,6 +26,7 @@ X-API-Key: {{ApiWriteKey}}
     "recipients": [
       "test2@example.com"
     ],
+    "from": "test.from@example.net",
     "subject": "Test Email 2",
     "body": "Plain text content for email 2",
     "isHtml": false
@@ -34,6 +36,7 @@ X-API-Key: {{ApiWriteKey}}
       "test3@example.com",
       "test3cc@example.com"
     ],
+    "from": "",
     "subject": "Test Email 3",
     "body": "<h1>Test Email 3</h1><p>HTML content for email 3</p>",
     "isHtml": true
@@ -42,6 +45,7 @@ X-API-Key: {{ApiWriteKey}}
     "recipients": [
       "test4@example.com"
     ],
+    "from": "test.from@example.net",
     "subject": "Test Email 4",
     "body": "Plain text content for email 4",
     "isHtml": false
@@ -68,6 +72,13 @@ X-API-Key: {{ApiWriteKey}}
 
 ###
 
+# List all email tasks.
+GET {{EmailQueue_HostAddress}}/emailTasks/list
+Content-Type: application/json
+X-API-Key: {{ApiReadKey}}
+
+###
+
 # This should fail (HTTP 403) because of the incorrect API key.
 GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
@@ -87,6 +98,25 @@ X-API-Key: {{ApiReadKey}}
 # This should fail (HTTP 401) because of the missing API key.
 GET {{EmailQueue_HostAddress}}/emailTasks/list
 Content-Type: application/json
+
+###
+
+# This should fail (HTTP 400) because of the missing from address.
+POST {{EmailQueue_HostAddress}}/emailTasks
+Content-Type: application/json
+X-API-Key: {{ApiWriteKey}}
+
+[
+  {
+    "recipients": [
+      "test1@example.com",
+      "test1cc@example.com"
+    ],
+    "subject": "Test Email 1",
+    "body": "Text content",
+    "isHtml": true
+  }
+]
 
 ###
 

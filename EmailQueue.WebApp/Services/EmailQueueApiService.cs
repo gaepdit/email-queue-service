@@ -26,5 +26,6 @@ public record EmailTaskViewModel
     public DateTime CreatedAt { get; [UsedImplicitly] init; }
     public DateTime? AttemptedAt { get; [UsedImplicitly] init; }
     [UsedImplicitly] public List<string> Recipients { get; init; } = [];
+    public required string From { get; [UsedImplicitly] init; }
     public required string Subject { get; [UsedImplicitly] init; }
 }

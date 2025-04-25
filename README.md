@@ -53,6 +53,7 @@ Request body: Array of email tasks
     "recipients": [
       "email@example.com"
     ],
+    "from": "from.email@example.net",
     "subject": "Email Subject",
     "body": "Email content",
     "isHtml": false
@@ -63,11 +64,13 @@ Request body: Array of email tasks
 Each email task contains the following properties:
 
 - `recipients`: List of email addresses (Required)
+- `from`: The return (from) email address (Required, but may be empty. If empty, the `DefaultSenderEmail` address from
+  the `EmailServiceSettings` is used)
 - `subject`: Email subject line, max 200 characters (Required)
 - `body`: Email content, max 20,000 characters (Required)
 - `isHtml`: Boolean indicating if the body is formatted as HTML (Required)
 
-Response:
+Response if successful:
 
 ```json
 {
@@ -75,6 +78,16 @@ Response:
   "message": "Emails have been queued.",
   "count": 1,
   "batchId": "guid-of-batch"
+}
+```
+
+If no email tasks are submitted, the following response will be returned:
+
+```json
+{
+  "status": "Empty",
+  "message": "No email tasks submitted.",
+  "count": 0
 }
 ```
 

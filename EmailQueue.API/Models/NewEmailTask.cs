@@ -6,7 +6,12 @@ namespace EmailQueue.API.Models;
 public record NewEmailTask
 {
     [Required(AllowEmptyStrings = false)]
+    [MaxLength(7000)]
     public List<string> Recipients { get; [UsedImplicitly] init; } = [];
+
+    [Required(AllowEmptyStrings = true)]
+    [StringLength(150)]
+    public string From { get; [UsedImplicitly] init; } = null!;
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(200)]
