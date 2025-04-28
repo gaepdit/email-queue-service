@@ -11,17 +11,19 @@ public record EmailTask : NewEmailTask
     // Properties
     public Guid Id { get; }
 
-    public Guid BatchId { get; init; }
-    public int Counter { get; init; }
+    [StringLength(10)]
+    public string BatchId { get; private init; } = null!;
+
+    public int Counter { get; private init; }
 
     [StringLength(50)]
-    public string? ApiKeyOwner { get; init; }
+    public string? ApiKeyOwner { get; private init; }
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(15)]
     public string Status { get; private set; } = "Queued";
 
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
     public DateTime? AttemptedAt { [UsedImplicitly] get; private set; }
 
     // Methods
@@ -37,7 +39,7 @@ public record EmailTask : NewEmailTask
         AttemptedAt = DateTime.UtcNow;
     }
 
-    public static EmailTask Create(NewEmailTask resource, Guid batchId, string apiKeyOwner, int counter) =>
+    public static EmailTask Create(NewEmailTask resource, string batchId, string apiKeyOwner, int counter) =>
         new(id: Guid.NewGuid())
         {
             BatchId = batchId,

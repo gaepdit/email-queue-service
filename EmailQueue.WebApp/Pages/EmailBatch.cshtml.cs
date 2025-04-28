@@ -10,26 +10,26 @@ namespace EmailQueue.WebApp.Pages;
 public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatchModel> logger) : PageModel
 {
     [FromRoute]
-    public Guid? Id { get; set; }
+    public string? Id { get; set; }
 
     [BindProperty]
     [Display(Name = "Batch ID")]
-    public Guid? BatchId { get; set; }
+    public string? BatchId { get; set; }
 
     public IEnumerable<EmailTaskViewModel> EmailTasks { get; private set; } = [];
     public string? ErrorMessage { get; private set; }
-    public bool ShowResults => Id.HasValue && ErrorMessage == null;
+    public bool ShowResults => !string.IsNullOrEmpty(Id) && ErrorMessage == null;
 
     [TempData]
     public string? NotificationMessage { get; set; }
 
     public async Task OnGetAsync()
     {
-        if (Id == null) return;
+        if (string.IsNullOrEmpty(Id)) return;
 
         try
         {
-            EmailTasks = await apiService.GetBatchEmailTasksAsync(Id.Value);
+            EmailTasks = await apiService.GetBatchEmailTasksAsync(Id);
         }
         catch (Exception ex)
         {
