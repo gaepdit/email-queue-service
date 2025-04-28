@@ -555,4 +555,4 @@ appsettings.*.json
 coveragereport/
 
 # Sqlite database and associated files
-EmailQueue.db*
+*.db*
