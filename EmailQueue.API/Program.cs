@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Populate application settings.
 builder.BindAppSettings();
 
+// Persist data protection keys.
+await builder.AddDataProtectionServices();
+
 // Configure API controllers.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
