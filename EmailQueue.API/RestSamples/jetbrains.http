@@ -1,13 +1,17 @@
 # See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
 
-@EmailQueue_HostAddress = https://localhost:7145
+@HostAddress = https://localhost:7145
 @ApiReadKey = api-read-key-1
 @ApiWriteKey = api-write-key-2
+
+### Check health.
+GET {{HostAddress}}/health
+Accept: application/json
 
 ###
 
 # @name addTasks
-POST {{EmailQueue_HostAddress}}/emailTasks
+POST {{HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
@@ -57,14 +61,14 @@ X-API-Key: {{ApiWriteKey}}
 ###
 
 # List all email tasks for returned batch ID.
-GET {{EmailQueue_HostAddress}}/emailTasks/list/{{batchId}}
+GET {{HostAddress}}/emailTasks/list/{{batchId}}
 Content-Type: application/json
 X-API-Key: {{ApiReadKey}}
 
 ###
 
 # Post an empty array.
-POST {{EmailQueue_HostAddress}}/emailTasks
+POST {{HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
@@ -73,21 +77,21 @@ X-API-Key: {{ApiWriteKey}}
 ###
 
 # List all email tasks.
-GET {{EmailQueue_HostAddress}}/emailTasks/list
+GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
 X-API-Key: {{ApiReadKey}}
 
 ###
 
 # This should fail (HTTP 403) because of the incorrect API key.
-GET {{EmailQueue_HostAddress}}/emailTasks/list
+GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
 ###
 
 # This should fail (HTTP 403) because of the incorrect API key.
-POST {{EmailQueue_HostAddress}}/emailTasks
+POST {{HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiReadKey}}
 
@@ -96,13 +100,13 @@ X-API-Key: {{ApiReadKey}}
 ###
 
 # This should fail (HTTP 401) because of the missing API key.
-GET {{EmailQueue_HostAddress}}/emailTasks/list
+GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
 
 ###
 
 # This should fail (HTTP 400) because of the missing from address.
-POST {{EmailQueue_HostAddress}}/emailTasks
+POST {{HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
@@ -121,7 +125,7 @@ X-API-Key: {{ApiWriteKey}}
 ###
 
 # This should fail (HTTP 400) because of the missing isHtml field.
-POST {{EmailQueue_HostAddress}}/emailTasks
+POST {{HostAddress}}/emailTasks
 Content-Type: application/json
 X-API-Key: {{ApiWriteKey}}
 
