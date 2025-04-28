@@ -1,4 +1,4 @@
-﻿using EmailQueue.WebApp.Platform;
+using EmailQueue.WebApp.Platform;
 using EmailQueue.WebApp.Platform.DataProtection;
 using EmailQueue.WebApp.Services;
 
