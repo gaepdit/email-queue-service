@@ -24,11 +24,11 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
         return Ok(tasks);
     }
 
-    [HttpGet("{batchId:guid}")]
-    public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] Guid batchId)
+    [HttpGet("{batchId:maxlength(10)}")]
+    public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId)
     {
         var tasks = await dbContext.EmailTasks
-            .Where(t => t.BatchId == batchId)
+            .Where(t => t.BatchId.ToUpper() == batchId.ToUpper())
             .OrderBy(t => t.CreatedAt)
             .ToListAsync();
 

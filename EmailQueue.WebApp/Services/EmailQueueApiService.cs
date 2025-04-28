@@ -4,7 +4,7 @@ namespace EmailQueue.WebApp.Services;
 
 public class EmailQueueApiService(IHttpClientFactory httpClientFactory)
 {
-    public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(Guid batchId)
+    public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(string batchId)
     {
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
         client.BaseAddress = new Uri(AppSettings.EmailQueueApi.BaseUrl);

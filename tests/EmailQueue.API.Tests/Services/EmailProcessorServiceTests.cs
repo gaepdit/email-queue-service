@@ -63,7 +63,7 @@ public class EmailProcessorServiceTests
             Subject = "Test Subject",
             IsHtml = false,
         },
-        batchId: Guid.NewGuid(), apiKeyOwner: "Test Owner", counter: 1);
+        batchId: "1234567890", apiKeyOwner: "Test Owner", counter: 1);
 
     [Test]
     public async Task ProcessEmailAsync_WhenEmailingDisabled_LogsWarningAndReturns()
