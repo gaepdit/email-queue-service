@@ -1,0 +1,48 @@
+@page "{id?}"
+@using EmailQueue.WebApp.Platform
+@model AllBatchesModel
+@{
+    ViewData["Title"] = "All Email Batches";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+else
+{
+    @if (!Model.AllBatches.Any())
+    {
+        <div class="alert alert-info">
+            No email batches found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Batch ID</th>
+                    <th>Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var task in Model.AllBatches)
+                {
+                    <tr>
+                        <td>
+                            <a asp-page="EmailBatch" asp-route-id="@task.BatchId" class="font-monospace">@task.BatchId</a>
+                        </td>
+                        <td>@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}

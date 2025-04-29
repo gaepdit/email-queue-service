@@ -15,23 +15,21 @@ namespace EmailQueue.API.Controllers;
 public class EmailTasksReadController(EmailQueueDbContext dbContext) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EmailTask>>> GetAllAsync()
-    {
-        var tasks = await dbContext.EmailTasks
-            .OrderByDescending(t => t.CreatedAt)
-            .ToListAsync();
-
-        return Ok(tasks);
-    }
+    public async Task<ActionResult<IEnumerable<EmailTask>>> GetAllBatchesAsync() =>
+        Ok(await dbContext.EmailTasks
+            .GroupBy(t => t.BatchId)
+            .Select(g => new
+            {
+                BatchId = g.Key,
+                CreatedAt = g.Min(t => t.CreatedAt),
+            })
+            .OrderByDescending(g => g.CreatedAt)
+            .ToListAsync());
 
     [HttpGet("{batchId:maxlength(10)}")]
-    public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId)
-    {
-        var tasks = await dbContext.EmailTasks
+    public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId) =>
+        Ok(await dbContext.EmailTasks
             .Where(t => t.BatchId.ToUpper() == batchId.ToUpper())
             .OrderBy(t => t.CreatedAt)
-            .ToListAsync();
-
-        return Ok(tasks);
-    }
+            .ToListAsync());
 }

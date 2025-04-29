@@ -76,7 +76,7 @@ X-API-Key: {{ApiWriteKey}}
 
 ###
 
-# List all email tasks.
+# List all email batches.
 GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
 X-API-Key: {{ApiReadKey}}
