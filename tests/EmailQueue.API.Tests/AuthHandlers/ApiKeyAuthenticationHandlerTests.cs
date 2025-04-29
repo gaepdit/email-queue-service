@@ -15,7 +15,6 @@ public class ApiKeyAuthenticationHandlerTests
     private ILoggerFactory _loggerFactory;
     private ApiKeyAuthenticationHandler _sut;
     private HttpContext _httpContext;
-    private IOptionsSnapshot<List<ApiKey>> _apiKeys;
     private const string ValidApiKey = "valid-api-key";
 
     private readonly ApiKey _testKey = new()
@@ -30,11 +29,12 @@ public class ApiKeyAuthenticationHandlerTests
     {
         // Set up mocks
         const string testScheme = "TestApiKey";
+
         var options = Substitute.For<IOptionsMonitor<AuthenticationSchemeOptions>>();
         options.Get(testScheme).Returns(new AuthenticationSchemeOptions());
 
-        _apiKeys = Substitute.For<IOptionsSnapshot<List<ApiKey>>>();
-        _apiKeys.Value.Returns([_testKey]);
+        var apiKeys = Substitute.For<IOptionsSnapshot<List<ApiKey>>>();
+        apiKeys.Value.Returns([_testKey]);
 
         _loggerFactory = Substitute.For<ILoggerFactory>();
         var urlEncoder = Substitute.For<UrlEncoder>();
@@ -43,7 +43,7 @@ public class ApiKeyAuthenticationHandlerTests
         _httpContext = new DefaultHttpContext();
 
         // Create handler
-        _sut = new ApiKeyAuthenticationHandler(options, _apiKeys, _loggerFactory, urlEncoder);
+        _sut = new ApiKeyAuthenticationHandler(options, apiKeys, _loggerFactory, urlEncoder);
 
         // Initialize handler with HTTP context
         var scheme = new AuthenticationScheme(testScheme, testScheme, typeof(ApiKeyAuthenticationHandler));
