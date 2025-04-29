@@ -1,16 +1,20 @@
 using EmailQueue.WebApp.Platform;
+using Microsoft.Extensions.Options;
 
 namespace EmailQueue.WebApp.Services;
 
-public class EmailQueueApiService(IHttpClientFactory httpClientFactory, ILogger<EmailQueueApiService> logger)
+public class EmailQueueApiService(
+    IHttpClientFactory httpClientFactory,
+    IOptionsSnapshot<EmailQueueApi> apiSettings,
+    ILogger<EmailQueueApiService> logger)
 {
     public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(string batchId)
     {
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
-        client.DefaultRequestHeaders.Add("X-API-Key", AppSettings.EmailQueueApi.ApiKey);
+        client.DefaultRequestHeaders.Add("X-API-Key", apiSettings.Value.ApiKey);
         logger.LogInformation("Getting batch {BatchId}", batchId);
 
-        using var response = await client.GetAsync(UriCombine(AppSettings.EmailQueueApi.BaseUrl,
+        using var response = await client.GetAsync(UriCombine(apiSettings.Value.BaseUrl,
             relativeUri: $"emailTasks/list/{batchId}"));
         response.EnsureSuccessStatusCode();
 

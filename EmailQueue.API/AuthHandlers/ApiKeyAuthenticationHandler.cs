@@ -8,6 +8,7 @@ namespace EmailQueue.API.AuthHandlers;
 
 public class ApiKeyAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
+    IOptionsSnapshot<List<ApiKey>> apiKeys,
     ILoggerFactory logger,
     UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
@@ -29,7 +30,7 @@ public class ApiKeyAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.Fail("API Key is empty"));
         }
 
-        var matchingKey = AppSettings.ApiKeys.FirstOrDefault(k => k.Key == providedApiKey);
+        var matchingKey = apiKeys.Value.FirstOrDefault(k => k.Key == providedApiKey);
 
         if (matchingKey == null)
         {

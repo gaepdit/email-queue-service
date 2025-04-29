@@ -4,7 +4,6 @@ namespace EmailQueue.WebApp.Platform;
 
 public static class AppSettings
 {
-    public static EmailQueueApi EmailQueueApi { get; } = new();
     public static RaygunClientSettings RaygunSettings { get; } = new();
     public static bool UseEntraId { get; private set; } = true;
     public static bool DevAuthFails { get; private set; }
@@ -14,7 +13,7 @@ public static class AppSettings
 
     public static void BindSettings(this WebApplicationBuilder builder)
     {
-        builder.Configuration.GetSection(nameof(EmailQueueApi)).Bind(EmailQueueApi);
+        builder.Services.AddOptions<EmailQueueApi>().BindConfiguration(configSectionPath: nameof(EmailQueueApi));
         builder.Configuration.GetSection(nameof(RaygunSettings)).Bind(RaygunSettings);
         UseEntraId = builder.Configuration.GetValue<bool>(nameof(UseEntraId));
         DevAuthFails = builder.Configuration.GetValue<bool>(nameof(DevAuthFails));
