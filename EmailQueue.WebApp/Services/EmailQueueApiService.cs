@@ -56,7 +56,8 @@ public record EmailTaskViewModel : IEndPointViewModel
 public record BatchViewModel : IEndPointViewModel
 {
     public required string BatchId { get; init; }
-    public DateTime CreatedAt { get; [UsedImplicitly] init; }
+    public string? Owner { get; init; }
+    public DateTime CreatedAt { get; init; }
 }
 
 public interface IEndPointViewModel;

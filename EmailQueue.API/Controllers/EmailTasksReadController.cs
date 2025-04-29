@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EmailQueue.API.Controllers;
 
@@ -22,11 +23,13 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
             {
                 BatchId = g.Key,
                 CreatedAt = g.Min(t => t.CreatedAt),
+                Owner = g.First().ApiKeyOwner,
             })
             .OrderByDescending(g => g.CreatedAt)
             .ToListAsync());
 
     [HttpGet("{batchId:maxlength(10)}")]
+    [SuppressMessage("Performance", "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
     public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId) =>
         Ok(await dbContext.EmailTasks
             .Where(t => t.BatchId.ToUpper() == batchId.ToUpper())
