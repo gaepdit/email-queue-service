@@ -5,8 +5,6 @@
     ViewData["Title"] = "Email Batch Details";
 }
 
-<h1>@ViewData["Title"]</h1>
-
 @if (!string.IsNullOrEmpty(Model.NotificationMessage))
 {
     <div class="alert alert-warning" role="alert">
@@ -39,7 +37,7 @@
 
 @if (Model.ShowResults)
 {
-    <h2 class="h4 text-secondary-emphasis">Batch ID: @Model.Id</h2>
+    <h2 class="h4 text-secondary-emphasis mb-3">Email Batch ID: @Model.Id</h2>
 
     @if (!Model.EmailTasks.Any())
     {
