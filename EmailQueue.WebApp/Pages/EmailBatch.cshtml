@@ -1,4 +1,4 @@
-@page "{id?}"
+@page
 @using EmailQueue.WebApp.Platform
 @model EmailBatchModel
 @{
@@ -37,16 +37,20 @@
 
 @if (Model.ShowResults)
 {
-    <h2 class="h4 text-secondary-emphasis mb-3">Email Batch ID: @Model.Id</h2>
+    <h2 class="h4 text-secondary-emphasis mb-3">Email Batch ID: @Model.BatchId</h2>
 
     @if (!Model.EmailTasks.Any())
     {
         <div class="alert alert-info">
-            No email tasks found for this Batch ID.
+            No emails found for this Batch ID.
         </div>
     }
     else
     {
+        <div class="alert alert-info">
+            @Model.EmailTasks.Count() emails found for this Batch ID.
+        </div>
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>

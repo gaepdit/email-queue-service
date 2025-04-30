@@ -36,7 +36,10 @@ else
                 {
                     <tr>
                         <td>
-                            <a asp-page="EmailBatch" asp-route-id="@task.BatchId" class="font-monospace">@task.BatchId</a>
+                            <form method="post" asp-page="EmailBatch">
+                                <input type="hidden" name="BatchId" value="@task.BatchId" />
+                                <button type="submit" class="btn btn-link font-monospace">@task.BatchId</button>
+                            </form>
                         </td>
                         <td>@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
                     </tr>

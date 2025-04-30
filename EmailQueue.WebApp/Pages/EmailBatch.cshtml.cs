@@ -9,39 +9,41 @@ namespace EmailQueue.WebApp.Pages;
 [Authorize]
 public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatchModel> logger) : PageModel
 {
-    [FromRoute]
-    public string? Id { get; set; }
-
     [BindProperty]
     [Display(Name = "Batch ID")]
     public string? BatchId { get; set; }
 
     public IEnumerable<EmailTaskViewModel> EmailTasks { get; private set; } = [];
     public string? ErrorMessage { get; private set; }
-    public bool ShowResults => !string.IsNullOrEmpty(Id) && ErrorMessage == null;
+    public bool ShowResults { get; private set; }
 
     [TempData]
     public string? NotificationMessage { get; set; }
 
-    public async Task OnGetAsync()
+    public void OnGet()
     {
-        if (string.IsNullOrEmpty(Id)) return;
+        // Method intentionally left empty.
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (string.IsNullOrWhiteSpace(BatchId) || BatchId.Length > 10)
+        {
+            NotificationMessage = "Please enter a valid Batch ID to continue.";
+            return RedirectToPage();
+        }
 
         try
         {
-            EmailTasks = await apiService.GetBatchEmailTasksAsync(Id);
+            EmailTasks = await apiService.GetBatchEmailTasksAsync(BatchId);
+            ShowResults = true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error fetching emails for batch {BatchId}", Id);
+            logger.LogError(ex, "Error fetching emails for batch {BatchId}", BatchId);
             ErrorMessage = "Error fetching emails. Please try again later.";
         }
-    }
 
-    public IActionResult OnPostAsync()
-    {
-        if (BatchId != null) return RedirectToPage(new { Id = BatchId });
-        NotificationMessage = "Please enter a valid Batch ID to continue.";
-        return RedirectToPage("EmailBatch", new { Id = (Guid?)null });
+        return Page();
     }
 }
