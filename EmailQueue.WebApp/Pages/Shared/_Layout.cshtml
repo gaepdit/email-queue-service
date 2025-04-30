@@ -12,40 +12,35 @@
     }
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Batch Viewer</title>
-    <partial name="_FaviconPartial" />
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"
-          integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" />
+    <link rel="icon" href="@Url.Content("~/icon.svg")" type="image/svg+xml">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <partial name="_RaygunScriptsPartial" />
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar bg-body-tertiary border-bottom box-shadow mb-3">
         <div class="container">
             <span class="navbar-brand">Email Batch Viewer</span>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <div class="d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                 </ul>
                 <ul class="navbar-nav">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <span class="navbar-text text-dark d-block">Hello, @greeting</span>
+                            <span class="navbar-text d-block">Hello, @greeting</span>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <span class="navbar-text text-dark d-block">Not signed in</span>
+                            <span class="navbar-text d-block">Not signed in</span>
                         </li>
                     }
                 </ul>
@@ -54,7 +49,7 @@
     </nav>
 </header>
 
-<main role="main" class="pb-3">
+<main role="main" class="pt-2 pb-3">
     <div class="container">
         @RenderBody()
     </div>
@@ -75,11 +70,16 @@
     </div>
 </footer>
 
-<script src="~/lib/jquery/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="></script>
-<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"
-        integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="></script>
+<script>
+    ;(function () {
+        function updateTheme() {
+            let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            document.querySelector("html").setAttribute("data-bs-theme", theme);
+        }
 
-@await RenderSectionAsync("Scripts", required: false)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+        updateTheme();
+    })()
+</script>
 </body>
 </html>

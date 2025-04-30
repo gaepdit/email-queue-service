@@ -1,26 +1,12 @@
 {
   "version": "1.0",
-  "defaultProvider": "cdnjs",
+  "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "jquery@3.7.1",
-      "destination": "wwwroot/lib/jquery/",
-      "files": [
-        "jquery.min.js",
-        "jquery.min.map",
-        "jquery.js"
-      ]
-    },
-    {
-      "library": "bootstrap@5.3.3",
+      "library": "bootstrap@5.3.5",
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
-        "js/bootstrap.bundle.min.js",
-        "js/bootstrap.bundle.js",
-        "js/bootstrap.bundle.min.js.map",
-        "css/bootstrap.css",
-        "css/bootstrap.min.css",
-        "css/bootstrap.min.css.map"
+        "dist/css/bootstrap.min.css"
       ]
     }
   ]
