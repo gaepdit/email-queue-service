@@ -42,9 +42,6 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddAuthentication(nameof(SecuritySchemeType.ApiKey))
     .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(nameof(SecuritySchemeType.ApiKey), null);
 
-// Configure authorization policies.
-builder.Services.AddAuthorizationPolicies();
-
 // Add database context.
 builder.Services.AddDbContext<EmailQueueDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));

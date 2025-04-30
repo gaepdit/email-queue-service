@@ -22,7 +22,7 @@ public static class AppSettingsExtensions
 
 public record QueueSettings
 {
-    public int ProcessingDelaySeconds { get; init; } = 5; // Default value if not specified in config
+    public int ProcessingDelaySeconds { get; [UsedImplicitly] init; } = 5; // Default value if not specified in config
 }
 
 public record ApiKey

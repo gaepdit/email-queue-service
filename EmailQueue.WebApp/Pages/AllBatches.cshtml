@@ -28,7 +28,6 @@ else
                 <thead>
                 <tr>
                     <th scope="col">Batch ID</th>
-                    <th scope="col">Owner</th>
                     <th scope="col">Created</th>
                 </tr>
                 </thead>
@@ -39,7 +38,6 @@ else
                         <td>
                             <a asp-page="EmailBatch" asp-route-id="@task.BatchId" class="font-monospace">@task.BatchId</a>
                         </td>
-                        <td>@task.Owner</td>
                         <td>@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
                     </tr>
                 }

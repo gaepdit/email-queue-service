@@ -41,22 +41,23 @@ public class EmailQueueApiService(
     }
 }
 
+[UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public record EmailTaskViewModel : IEndPointViewModel
 {
-    public int Counter { get; [UsedImplicitly] init; }
-    public required string Status { get; [UsedImplicitly] init; }
-    public string? ApiKeyOwner { get; [UsedImplicitly] init; }
-    public DateTime CreatedAt { get; [UsedImplicitly] init; }
-    public DateTime? AttemptedAt { get; [UsedImplicitly] init; }
-    [UsedImplicitly] public List<string> Recipients { get; init; } = [];
-    public required string From { get; [UsedImplicitly] init; }
-    public required string Subject { get; [UsedImplicitly] init; }
+    public int Counter { get; init; }
+    public required string Status { get; init; }
+    public string? ApiKeyOwner { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime? AttemptedAt { get; init; }
+    public List<string> Recipients { get; init; } = [];
+    public required string From { get; init; }
+    public required string Subject { get; init; }
 }
 
+[UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public record BatchViewModel : IEndPointViewModel
 {
     public required string BatchId { get; init; }
-    public string? Owner { get; init; }
     public DateTime CreatedAt { get; init; }
 }
 
