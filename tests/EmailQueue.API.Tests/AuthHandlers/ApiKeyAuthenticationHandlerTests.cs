@@ -15,21 +15,35 @@ public class ApiKeyAuthenticationHandlerTests
     private ILoggerFactory _loggerFactory;
     private ApiKeyAuthenticationHandler _sut;
     private HttpContext _httpContext;
+    private const string ValidApiKey = "valid-api-key";
+
+    private readonly ApiKey _testKey = new()
+    {
+        Key = ValidApiKey,
+        Owner = "Test Owner",
+        Permissions = ["read", "write"],
+    };
 
     [SetUp]
     public void Setup()
     {
         // Set up mocks
         const string testScheme = "TestApiKey";
+
         var options = Substitute.For<IOptionsMonitor<AuthenticationSchemeOptions>>();
         options.Get(testScheme).Returns(new AuthenticationSchemeOptions());
+
+        var apiKeys = Substitute.For<IOptionsSnapshot<List<ApiKey>>>();
+        apiKeys.Value.Returns([_testKey]);
+
         _loggerFactory = Substitute.For<ILoggerFactory>();
+        var urlEncoder = Substitute.For<UrlEncoder>();
 
         // Create HTTP context
         _httpContext = new DefaultHttpContext();
 
         // Create handler
-        _sut = new ApiKeyAuthenticationHandler(options, _loggerFactory, Substitute.For<UrlEncoder>());
+        _sut = new ApiKeyAuthenticationHandler(options, apiKeys, _loggerFactory, urlEncoder);
 
         // Initialize handler with HTTP context
         var scheme = new AuthenticationScheme(testScheme, testScheme, typeof(ApiKeyAuthenticationHandler));
@@ -39,9 +53,6 @@ public class ApiKeyAuthenticationHandlerTests
     [TearDown]
     public void Cleanup()
     {
-        // Clean up any test API keys
-        AppSettings.ApiKeys.Clear();
-
         // Dispose of ILoggerFactory
         _loggerFactory.Dispose();
     }
@@ -78,7 +89,6 @@ public class ApiKeyAuthenticationHandlerTests
     {
         // Arrange
         _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = "invalid-key";
-        AppSettings.ApiKeys.Clear();
 
         // Act
         var result = await _sut.AuthenticateAsync();
@@ -93,17 +103,7 @@ public class ApiKeyAuthenticationHandlerTests
     public async Task HandleAuthenticateAsync_WithValidApiKey_ReturnsSuccess()
     {
         // Arrange
-        const string apiKey = "test-api-key";
-        var testKey = new ApiKeyConfig
-        {
-            Key = apiKey,
-            Owner = "Test Owner",
-            Permissions = ["read", "write"],
-        };
-
-        AppSettings.ApiKeys.Clear();
-        AppSettings.ApiKeys.Add(testKey);
-        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = apiKey;
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = ValidApiKey;
 
         // Act
         var result = await _sut.AuthenticateAsync();
@@ -114,8 +114,8 @@ public class ApiKeyAuthenticationHandlerTests
         var identity = result.Principal?.Identity as ClaimsIdentity;
         identity.Should().NotBeNull();
         Debug.Assert(identity != null);
-        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.Name && c.Value == testKey.Owner);
-        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier && c.Value == testKey.Key);
+        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.Name && c.Value == _testKey.Owner);
+        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier && c.Value == _testKey.Key);
         identity.Claims.Should()
             .Contain(c => c.Type == ApiKeyAuthenticationHandler.PermissionClaimType && c.Value == "read");
         identity.Claims.Should()
