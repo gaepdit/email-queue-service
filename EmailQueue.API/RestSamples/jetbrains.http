@@ -1,8 +1,8 @@
 # See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
 
 @HostAddress = https://localhost:7145
-@ApiReadKey = api-read-key-1
-@ApiWriteKey = api-write-key-2
+@ApiKey = client-api-key-1
+@InvalidApiKey = invalid-api-key
 
 ### Check health.
 GET {{HostAddress}}/health
@@ -13,7 +13,7 @@ Accept: application/json
 # @name addTasks
 POST {{HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiWriteKey}}
+X-API-Key: {{ApiKey}}
 
 [
   {
@@ -63,37 +63,37 @@ X-API-Key: {{ApiWriteKey}}
 # List all email tasks for returned batch ID.
 GET {{HostAddress}}/emailTasks/list/{{batchId}}
 Content-Type: application/json
-X-API-Key: {{ApiReadKey}}
+X-API-Key: {{ApiKey}}
 
 ###
 
 # Post an empty array.
 POST {{HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiWriteKey}}
+X-API-Key: {{ApiKey}}
 
 []
 
 ###
 
-# List all email tasks.
+# List all email batches.
 GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
-X-API-Key: {{ApiReadKey}}
+X-API-Key: {{ApiKey}}
 
-###
+### ERROR TESTING ###
 
 # This should fail (HTTP 403) because of the incorrect API key.
 GET {{HostAddress}}/emailTasks/list
 Content-Type: application/json
-X-API-Key: {{ApiWriteKey}}
+X-API-Key: {{InvalidApiKey}}
 
 ###
 
 # This should fail (HTTP 403) because of the incorrect API key.
 POST {{HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiReadKey}}
+X-API-Key: {{InvalidApiKey}}
 
 []
 
@@ -108,7 +108,7 @@ Content-Type: application/json
 # This should fail (HTTP 400) because of the missing from address.
 POST {{HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiWriteKey}}
+X-API-Key: {{ApiKey}}
 
 [
   {
@@ -127,7 +127,7 @@ X-API-Key: {{ApiWriteKey}}
 # This should fail (HTTP 400) because of the missing isHtml field.
 POST {{HostAddress}}/emailTasks
 Content-Type: application/json
-X-API-Key: {{ApiWriteKey}}
+X-API-Key: {{ApiKey}}
 
 [
   {

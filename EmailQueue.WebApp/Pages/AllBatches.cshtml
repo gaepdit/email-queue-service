@@ -1,0 +1,51 @@
+@page "{id?}"
+@using EmailQueue.WebApp.Platform
+@model AllBatchesModel
+@{
+    ViewData["Title"] = "All Email Batches";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+else
+{
+    @if (!Model.AllBatches.Any())
+    {
+        <div class="alert alert-info">
+            No email batches found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Batch ID</th>
+                    <th scope="col">Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var task in Model.AllBatches)
+                {
+                    <tr>
+                        <td>
+                            <form method="post" asp-page="EmailBatch">
+                                <input type="hidden" name="BatchId" value="@task.BatchId" />
+                                <button type="submit" class="btn btn-link font-monospace">@task.BatchId</button>
+                            </form>
+                        </td>
+                        <td>@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}

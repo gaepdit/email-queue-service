@@ -24,7 +24,7 @@ public record EmailTask : NewEmailTask
     public string Status { get; private set; } = "Queued";
 
     public DateTime CreatedAt { get; private init; } = DateTime.UtcNow;
-    public DateTime? AttemptedAt { [UsedImplicitly] get; private set; }
+    public DateTime? AttemptedAt { get; private set; }
 
     // Methods
     public void MarkAsSent()

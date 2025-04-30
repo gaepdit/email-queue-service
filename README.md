@@ -92,7 +92,7 @@ If no email tasks are submitted, the following response will be returned:
 
 #### GET /emailTasks/list
 
-Returns all email tasks in the system, ordered by creation date descending.
+Returns all batch IDs in the system, ordered by creation date descending.
 
 #### GET /emailTasks/list/{batchId}
 

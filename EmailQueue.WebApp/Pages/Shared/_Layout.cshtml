@@ -56,17 +56,18 @@
 </main>
 
 <footer class="border-top footer text-muted">
-    <div class="container">
-        Email Batch Viewer &copy; 2025 State of Georgia
-        @if (!string.IsNullOrEmpty(AppSettings.InformationalVersion))
-        {
-            <span class="d-print-none">| Current version: @AppSettings.InformationalVersion
-                @if (!string.IsNullOrEmpty(AppSettings.InformationalBuild))
-                {
-                    <em>(@AppSettings.InformationalBuild)</em>
-                }
+    <div class="container"><small>
+            Email Batch Viewer
+            @if (!string.IsNullOrEmpty(AppSettings.InformationalVersion))
+            {
+                <span class="d-print-none">| Current version: @AppSettings.InformationalVersion
+                    @if (!string.IsNullOrEmpty(AppSettings.InformationalBuild))
+                    {
+                        <em>(@AppSettings.InformationalBuild)</em>
+                    }
             </span>
-        }
+            }
+        </small>
     </div>
 </footer>
 
