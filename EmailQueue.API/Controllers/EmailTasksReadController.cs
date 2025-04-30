@@ -10,11 +10,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace EmailQueue.API.Controllers;
 
 [ApiController]
-[Route("emailTasks/list")]
+[Route("/")]
 [Authorize(AuthenticationSchemes = nameof(SecuritySchemeType.ApiKey))]
 public class EmailTasksReadController(EmailQueueDbContext dbContext) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("batches")]
     public async Task<ActionResult<IEnumerable<EmailTask>>> GetAllBatchesAsync() =>
         Ok(await dbContext.EmailTasks
             .Where(t => t.ApiKeyOwner == User.ApiKeyOwner())
@@ -23,7 +23,7 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
             .OrderByDescending(g => g.CreatedAt)
             .ToListAsync());
 
-    [HttpGet("{batchId:maxlength(10)}")]
+    [HttpGet("batch/{batchId:maxlength(10)}")]
     [SuppressMessage("Performance",
         "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
     public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId) =>

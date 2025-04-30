@@ -1,4 +1,4 @@
-# See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
+# See https://marketplace.visualstudio.com/items/?itemName=humao.rest-client
 
 @HostAddress = https://localhost:7145
 @ApiKey = client-api-key-1
@@ -11,7 +11,7 @@ Accept: application/json
 ###
 
 # @name addTasks
-POST {{HostAddress}}/emailTasks
+POST {{HostAddress}}/add
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
@@ -56,19 +56,19 @@ X-API-Key: {{ApiKey}}
   }
 ]
 
-> {% client.global.set("batchId", response.body.batchId); %}
-
 ###
 
+@batchId = {{addTasks.response.body.batchId}}
+
 # List all email tasks for returned batch ID.
-GET {{HostAddress}}/emailTasks/list/{{batchId}}
+GET {{HostAddress}}/batch/{{batchId}}
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
 ###
 
 # Post an empty array.
-POST {{HostAddress}}/emailTasks
+POST {{HostAddress}}/add
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
@@ -77,21 +77,23 @@ X-API-Key: {{ApiKey}}
 ###
 
 # List all email batches.
-GET {{HostAddress}}/emailTasks/list
+GET {{HostAddress}}/batches
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
-### ERROR TESTING ###
+###
 
-# This should fail (HTTP 403) because of the incorrect API key.
-GET {{HostAddress}}/emailTasks/list
+// == ERROR TESTING == 
+
+# This should fail (HTTP 401 Unauthorized) because of the incorrect API key.
+GET {{HostAddress}}/batches
 Content-Type: application/json
 X-API-Key: {{InvalidApiKey}}
 
 ###
 
-# This should fail (HTTP 403) because of the incorrect API key.
-POST {{HostAddress}}/emailTasks
+# This should fail (HTTP 401 Unauthorized) because of the incorrect API key.
+POST {{HostAddress}}/add
 Content-Type: application/json
 X-API-Key: {{InvalidApiKey}}
 
@@ -99,14 +101,14 @@ X-API-Key: {{InvalidApiKey}}
 
 ###
 
-# This should fail (HTTP 401) because of the missing API key.
-GET {{HostAddress}}/emailTasks/list
+# This should fail (HTTP 401 Unauthorized) because of the missing API key.
+GET {{HostAddress}}/batches
 Content-Type: application/json
 
 ###
 
-# This should fail (HTTP 400) because of the missing from address.
-POST {{HostAddress}}/emailTasks
+# This should fail (HTTP 400 Bad Request) because of the missing from address.
+POST {{HostAddress}}/add
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
@@ -124,8 +126,15 @@ X-API-Key: {{ApiKey}}
 
 ###
 
-# This should fail (HTTP 400) because of the missing isHtml field.
-POST {{HostAddress}}/emailTasks
+# This should fail (HTTP 404 Not Found) because of the missing Batch ID.
+GET {{HostAddress}}/batch/
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+###
+
+# This should fail (HTTP 400 Bad Request) because of the missing isHtml field.
+POST {{HostAddress}}/add
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 

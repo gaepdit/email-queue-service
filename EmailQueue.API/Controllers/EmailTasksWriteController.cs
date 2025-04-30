@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 namespace EmailQueue.API.Controllers;
 
 [ApiController]
-[Route("emailTasks")]
+[Route("add")]
 [Authorize(AuthenticationSchemes = nameof(SecuritySchemeType.ApiKey))]
 public class EmailTasksWriteController(IQueueService queueService) : ControllerBase
 {
