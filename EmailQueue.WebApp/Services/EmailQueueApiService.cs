@@ -11,13 +11,13 @@ public class EmailQueueApiService(
     public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(string batchId)
     {
         logger.LogInformation("Getting batch {BatchId}", batchId);
-        return await GetApiDataAsync<EmailTaskViewModel>($"emailTasks/list/{batchId}");
+        return await GetApiDataAsync<EmailTaskViewModel>($"batch/{batchId}");
     }
 
     public async Task<IEnumerable<BatchViewModel>> GetAllBatchesAsync()
     {
         logger.LogInformation("Getting all batches");
-        return await GetApiDataAsync<BatchViewModel>("emailTasks/list");
+        return await GetApiDataAsync<BatchViewModel>("batches");
     }
 
     private async Task<IEnumerable<T>> GetApiDataAsync<T>(string endpoint) where T : IEndPointViewModel

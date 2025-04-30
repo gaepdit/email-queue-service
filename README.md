@@ -4,8 +4,8 @@ This application creates an API to queue and process bulk emails as well as a we
 email batch.
 
 A batch of emails can be sent as an array to the API, which will then queue and process them with a configurable delay
-between each. The emails are saved in a database with their current status. If the application needs to restart before
-all emails are processed, any unsent emails will be loaded from the database and processing will continue.
+between each. The submitted emails are also saved in a database. If the application needs to restart before all emails
+are processed, any unsent emails will be loaded from the database and processing will continue.
 
 ## API Configuration
 
@@ -25,27 +25,29 @@ Configure the delay in seconds between processing each email.
 
 ### Security
 
-All API endpoints require authentication using an API key passed in the `X-API-Key` header with each request. Valid API
+All API endpoints require authentication using an API Key passed in the `X-API-Key` header with each request. Valid API
 keys are configured in `appsettings.json`.
 
 ```json
 {
   "ApiKeys": [
     {
-      "key": "your-secret-api-key-1",
-      "owner": "Your Web Application"
+      "owner": "Your Web Application",
+      "key": "your-secret-api-key-1"
     }
   ]
 }
 ```
 
-### Endpoints
+The owner field is saved in the database along with each email submitted using that API Key.
 
-#### POST /emailTasks
+### API Endpoints
 
-Enqueues a batch of email tasks for processing.
+#### POST /add
 
-Request body: Array of email tasks
+Submits a batch of email tasks for processing.
+
+Request body: Array of email tasks.
 
 ```json
 [
@@ -76,9 +78,11 @@ Response if successful:
 {
   "status": "Success",
   "count": 1,
-  "batchId": "guid-of-batch"
+  "batchId": "id-of-batch"
 }
 ```
+
+Currently, the Batch ID is a ten-character random string.
 
 If no email tasks are submitted, the following response will be returned:
 
@@ -90,23 +94,22 @@ If no email tasks are submitted, the following response will be returned:
 }
 ```
 
-#### GET /emailTasks/list
+#### GET /batches
 
-Returns all batch IDs in the system, ordered by creation date descending.
+Returns a list of all Batch IDs in the system for the provided API Key, ordered by creation date descending.
 
-#### GET /emailTasks/list/{batchId}
+#### GET /batch/{batchId}
 
-Returns all email tasks for a specific batch ID, ordered by creation date ascending.
+Returns all email tasks for a specific Batch ID, ordered by creation date ascending.
 
 ---
 
-## Web App Configuration
+## Sample Web App Configuration
 
-The web application is configured through `appsettings.json` with the following sections:
+A sample web application is provided to demonstrate displaying data from the API. The web application is configured
+through `appsettings.json` with the following sections:
 
-### Email Queue API Connection
-
-Configure the base URL and API key for connecting to the Email Queue API.
+### Email Queue API
 
 ```json
 {
@@ -119,7 +122,7 @@ Configure the base URL and API key for connecting to the Email Queue API.
 
 ### Authentication
 
-The application supports two authentication modes:
+The sample web application supports two authentication modes:
 
 * Dev/fake authentication (default when running in a development environment)
 
