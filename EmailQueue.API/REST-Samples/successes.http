@@ -1,0 +1,86 @@
+# Formatted for the JetBrains REST client
+# See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
+
+@HostAddress = https://localhost:7145
+@ApiKey = client-api-key-1
+@InvalidApiKey = invalid-api-key
+
+// =====================
+// == SUCCESS TESTING == 
+
+### Check health
+GET {{HostAddress}}/health
+Accept: application/json
+
+### Send Emails
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test1@example.com"
+    ],
+    "copyRecipients": [
+      "test1cc@example.com"
+    ],
+    "from": "test.from@example.net",
+    "subject": "Test Email 1",
+    "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
+    "isHtml": true
+  },
+  {
+    "recipients": [
+      "test2@example.com"
+    ],
+    "copyRecipients": [
+      "test2cc@example.com",
+      "test2cc2@example.com"
+    ],
+    "from": "test.from@example.net",
+    "subject": "Test Email 2",
+    "body": "Plain text content for email 2",
+    "isHtml": false
+  },
+  {
+    "recipients": [
+      "test3@example.com",
+      "test3r2@example.com"
+    ],
+    "from": "",
+    "subject": "Test Email 3",
+    "body": "<h1>Test Email 3</h1><p>HTML content for email 3</p>",
+    "isHtml": true
+  },
+  {
+    "recipients": [
+      "test4@example.com"
+    ],
+    "from": "test.from@example.net",
+    "subject": "Test Email 4",
+    "body": "Plain text content for email 4",
+    "isHtml": false
+  }
+]
+
+> {%
+    client.global.set("batchId", response.body.batchId);
+%}
+
+### List all email tasks for returned batch ID
+GET {{HostAddress}}/batch/{{batchId}}
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+### List all email batches
+GET {{HostAddress}}/batches
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+### Post an empty array
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[]

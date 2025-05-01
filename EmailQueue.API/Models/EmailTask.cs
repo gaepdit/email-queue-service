@@ -46,6 +46,7 @@ public record EmailTask : NewEmailTask
             Counter = counter,
             ApiKeyOwner = apiKeyOwner,
             Recipients = resource.Recipients,
+            CopyRecipients = resource.CopyRecipients,
             From = resource.From,
             Subject = resource.Subject,
             Body = resource.Body,

@@ -1,0 +1,261 @@
+# Formatted for the JetBrains REST client
+# See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
+
+@HostAddress = https://localhost:7145
+@ApiKey = client-api-key-1
+@InvalidApiKey = invalid-api-key
+
+// ===================
+// == ERROR TESTING == 
+
+### GET (HTTP 401 Unauthorized) incorrect API key
+GET {{HostAddress}}/batches
+Content-Type: application/json
+X-API-Key: {{InvalidApiKey}}
+
+### POST (HTTP 401 Unauthorized) incorrect API key
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{InvalidApiKey}}
+
+[]
+
+### (HTTP 401 Unauthorized) missing API key
+GET {{HostAddress}}/batches
+Content-Type: application/json
+
+### (HTTP 404 Not Found) missing Batch ID
+GET {{HostAddress}}/batch/
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+### (HTTP 400 Bad Request) missing "recipients" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) missing "from" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) missing "subject" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) missing "body" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) missing "isHtml" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-"
+  }
+]
+
+### (HTTP 400 Bad Request) empty "recipients" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) empty value in the "recipients" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      ""
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) empty value in the "copyRecipients" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      ""
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) empty "subject" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) empty "body" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "",
+    "isHtml": false
+  }
+]
+
+### (HTTP 400 Bad Request) incorrectly formatted "isHtml" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "-",
+    "body": "-",
+    "isHtml": "false"
+  }
+]
+
+### (HTTP 400 Bad Request) extra long "subject" field (201 characters)
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "test@example.net",
+    "subject": "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------",
+    "body": "-",
+    "isHtml": false
+  }
+]

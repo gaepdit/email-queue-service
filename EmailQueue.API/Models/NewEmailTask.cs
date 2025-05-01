@@ -1,15 +1,19 @@
+using EmailQueue.API.Validation;
 using System.Text.Json.Serialization;
 
 namespace EmailQueue.API.Models;
 
 public record NewEmailTask
 {
-    [Required(AllowEmptyStrings = false)]
-    [MaxLength(7000)]
+    [JsonRequired]
+    [MinLength(1)]
+    [NoEmptyStrings]
     public List<string> Recipients { get; init; } = [];
 
-    [Required(AllowEmptyStrings = true)]
-    [StringLength(150)]
+    [NoEmptyStrings]
+    public List<string> CopyRecipients { get; init; } = [];
+
+    [StringLength(100)]
     public string From { get; init; } = null!;
 
     [Required(AllowEmptyStrings = false)]

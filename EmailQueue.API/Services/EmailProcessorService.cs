@@ -49,7 +49,8 @@ public class EmailProcessorService(
             message = Message.Create(email.Subject, email.Recipients,
                 textBody: email.IsHtml ? null : email.Body,
                 htmlBody: email.IsHtml ? email.Body : null,
-                senderEmail: string.IsNullOrWhiteSpace(email.From) ? null : email.From);
+                senderEmail: string.IsNullOrWhiteSpace(email.From) ? null : email.From,
+                copyRecipients: email.CopyRecipients);
         }
         catch (Exception ex)
         {
