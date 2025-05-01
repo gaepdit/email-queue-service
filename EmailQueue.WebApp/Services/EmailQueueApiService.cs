@@ -58,6 +58,7 @@ public record EmailTaskViewModel : IEndPointViewModel
 public record BatchViewModel : IEndPointViewModel
 {
     public required string BatchId { get; init; }
+    public int Count { get; init; }
     public DateTime CreatedAt { get; init; }
 }
 

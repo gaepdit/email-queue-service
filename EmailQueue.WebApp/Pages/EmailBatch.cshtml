@@ -55,26 +55,24 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Initiator</th>
-                    <th>Subject</th>
-                    <th>Recipients</th>
-                    <th>From</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Sent</th>
+                    <th scope="col" class="text-end">#</th>
+                    <th scope="col">Initiator</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Recipients</th>
+                    <th scope="col" class="text-center">Status</th>
+                    <th scope="col" class="text-center">Created</th>
+                    <th scope="col" class="text-center">Sent</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var task in Model.EmailTasks)
                 {
                     <tr>
-                        <td>@task.Counter</td>
+                        <td class="text-end">@task.Counter</td>
                         <td>@task.ApiKeyOwner</td>
                         <td>@task.Subject</td>
                         <td>@string.Join(", ", task.Recipients)</td>
-                        <td>@task.From</td>
-                        <td>
+                        <td class="text-center">
                                 <span class="badge bg-@(task.Status switch
                                                       {
                                                           "Sent" => "success",
@@ -85,8 +83,8 @@
                                     @task.Status
                                 </span>
                         </td>
-                        <td>@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
-                        <td>@(task.AttemptedAt?.ToLocalTime().ToString(AppSettings.DateTimeFormat) ?? "-")</td>
+                        <td class="text-center">@task.CreatedAt.ToLocalTime().ToString(AppSettings.DateTimeFormat)</td>
+                        <td class="text-center">@(task.AttemptedAt?.ToLocalTime().ToString(AppSettings.DateTimeFormat) ?? "-")</td>
                     </tr>
                 }
                 </tbody>
