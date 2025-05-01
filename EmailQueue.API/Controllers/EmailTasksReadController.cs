@@ -15,20 +15,20 @@ namespace EmailQueue.API.Controllers;
 public class EmailTasksReadController(EmailQueueDbContext dbContext) : ControllerBase
 {
     [HttpGet("batches")]
-    public async Task<ActionResult<IEnumerable<EmailTask>>> GetAllBatchesAsync() =>
+    public async Task<ActionResult> GetAllBatchesAsync() =>
         Ok(await dbContext.EmailTasks
             .Where(t => t.ApiKeyOwner == User.ApiKeyOwner())
             .GroupBy(t => t.BatchId)
-            .Select(g => new { BatchId = g.Key, CreatedAt = g.Min(t => t.CreatedAt) })
+            .Select(g => new { BatchId = g.Key, Count = g.Count(), CreatedAt = g.Min(t => t.CreatedAt) })
             .OrderByDescending(g => g.CreatedAt)
             .ToListAsync());
 
-    [HttpGet("batch/{batchId:maxlength(10)}")]
+    [HttpPost("batch")]
     [SuppressMessage("Performance",
         "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
-    public async Task<ActionResult<IEnumerable<EmailTask>>> GetBatchAsync([FromRoute] string batchId) =>
+    public async Task<ActionResult> GetBatchDetailsAsync([FromBody] BatchRequest request) =>
         Ok(await dbContext.EmailTasks
-            .Where(t => t.BatchId.ToUpper() == batchId.ToUpper() && t.ApiKeyOwner == User.ApiKeyOwner())
+            .Where(t => t.BatchId == request.BatchId && t.ApiKeyOwner == User.ApiKeyOwner())
             .OrderBy(t => t.CreatedAt)
             .ToListAsync());
 }

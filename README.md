@@ -55,6 +55,7 @@ Request body: Array of email tasks.
     "recipients": [
       "email@example.com"
     ],
+    "copyRecipients": [],
     "from": "from.email@example.net",
     "subject": "Email Subject",
     "body": "Email content",
@@ -65,7 +66,8 @@ Request body: Array of email tasks.
 
 Each email task contains the following properties:
 
-- `recipients`: List of email addresses (Required)
+- `recipients`: List of recipient email addresses (Required)
+- `copyRecipients`: List of copied email addresses (Optional)
 - `from`: The return (from) email address (Required, but may be empty. If empty, the `DefaultSenderEmail` address from
   the `EmailServiceSettings` is used)
 - `subject`: Email subject line, max 200 characters (Required)
@@ -98,7 +100,9 @@ If no email tasks are submitted, the following response will be returned:
 
 Returns a list of all Batch IDs in the system for the provided API Key, ordered by creation date descending.
 
-#### GET /batch/{batchId}
+#### POST /batch/
+
+Body: "{batchId}"
 
 Returns all email tasks for a specific Batch ID, ordered by creation date ascending.
 

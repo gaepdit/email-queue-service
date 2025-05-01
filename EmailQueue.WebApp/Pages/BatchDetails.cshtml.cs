@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace EmailQueue.WebApp.Pages;
 
 [Authorize]
-public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatchModel> logger) : PageModel
+public class BatchDetailsModel(EmailQueueApiService apiService, ILogger<BatchDetailsModel> logger) : PageModel
 {
     [BindProperty]
     [Display(Name = "Batch ID")]
@@ -35,7 +35,7 @@ public class EmailBatchModel(EmailQueueApiService apiService, ILogger<EmailBatch
 
         try
         {
-            EmailTasks = await apiService.GetBatchEmailTasksAsync(BatchId);
+            EmailTasks = await apiService.GetBatchDetailsAsync(BatchId);
             ShowResults = true;
         }
         catch (Exception ex)
