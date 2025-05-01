@@ -10,7 +10,7 @@ public class EmailQueueApiService(
     IOptionsSnapshot<EmailQueueApi> apiSettings,
     ILogger<EmailQueueApiService> logger)
 {
-    public async Task<IEnumerable<EmailTaskViewModel>> GetBatchEmailTasksAsync(string batchId)
+    public async Task<IEnumerable<EmailTaskViewModel>> GetBatchDetailsAsync(string batchId)
     {
         logger.LogInformation("Getting batch {BatchId}", batchId);
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));

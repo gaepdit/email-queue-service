@@ -1,6 +1,6 @@
 @page
 @using EmailQueue.WebApp.Platform
-@model EmailBatchModel
+@model BatchDetailsModel
 @{
     ViewData["Title"] = "Email Batch Details";
 }
@@ -37,8 +37,6 @@
 
 @if (Model.ShowResults)
 {
-    <h2 class="h4 text-secondary-emphasis mb-3">Email Batch ID: @Model.BatchId</h2>
-
     @if (!Model.EmailTasks.Any())
     {
         <div class="alert alert-info">
