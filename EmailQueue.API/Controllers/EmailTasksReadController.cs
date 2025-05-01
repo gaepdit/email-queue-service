@@ -1,5 +1,6 @@
 using EmailQueue.API.AuthHandlers;
 using EmailQueue.API.Data;
+using EmailQueue.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +26,9 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
     [HttpPost("batch")]
     [SuppressMessage("Performance",
         "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
-    public async Task<ActionResult> GetBatchAsync([FromBody] [MaxLength(10)] [MinLength(1)] string batchId) =>
+    public async Task<ActionResult> GetBatchAsync([FromBody] BatchRequest request) =>
         Ok(await dbContext.EmailTasks
-            .Where(t => t.BatchId.ToUpper() == batchId.ToUpper() && t.ApiKeyOwner == User.ApiKeyOwner())
+            .Where(t => t.BatchId.ToUpper() == request.BatchId.ToUpper() && t.ApiKeyOwner == User.ApiKeyOwner())
             .OrderBy(t => t.CreatedAt)
             .ToListAsync());
 }

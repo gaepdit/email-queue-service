@@ -1,6 +1,7 @@
 using EmailQueue.WebApp.Platform;
 using Microsoft.Extensions.Options;
 using System.Text;
+using System.Text.Json;
 
 namespace EmailQueue.WebApp.Services;
 
@@ -14,8 +15,9 @@ public class EmailQueueApiService(
         logger.LogInformation("Getting batch {BatchId}", batchId);
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
         client.DefaultRequestHeaders.Add("X-API-Key", apiSettings.Value.ApiKey);
+        var requestPayload = new { BatchId = batchId };
         using var response = await client.PostAsync(UriCombine(apiSettings.Value.BaseUrl, "batch"),
-            new StringContent($"\"{batchId}\"", Encoding.UTF8, "application/json"));
+            new StringContent(JsonSerializer.Serialize(requestPayload), Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<EmailTaskViewModel>>().ConfigureAwait(false) ?? [];
     }

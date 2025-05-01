@@ -73,7 +73,9 @@ POST {{HostAddress}}/batch/
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
-"{{batchId}}"
+{
+  "BatchId": "{{batchId}}"
+}
 
 ### List all email batches
 GET {{HostAddress}}/batches

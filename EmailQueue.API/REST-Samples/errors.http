@@ -24,17 +24,26 @@ X-API-Key: {{InvalidApiKey}}
 GET {{HostAddress}}/batches
 Content-Type: application/json
 
-### (HTTP 400 Bad Request) missing Batch ID
+### (HTTP 400 Bad Request) missing Batch Request
 POST {{HostAddress}}/batch/
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
+
+### (HTTP 400 Bad Request) empty Batch Request
+POST {{HostAddress}}/batch/
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+{}
 
 ### (HTTP 400 Bad Request) empty Batch ID
 POST {{HostAddress}}/batch/
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
 
-""
+{
+  "BatchId": ""
+}
 
 ### (HTTP 400 Bad Request) missing "recipients" field
 POST {{HostAddress}}/add
