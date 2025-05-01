@@ -22,10 +22,10 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
             .OrderByDescending(g => g.CreatedAt)
             .ToListAsync());
 
-    [HttpGet("batch/{batchId:maxlength(10)}")]
+    [HttpPost("batch")]
     [SuppressMessage("Performance",
         "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
-    public async Task<ActionResult> GetBatchAsync([FromRoute] string batchId) =>
+    public async Task<ActionResult> GetBatchAsync([FromBody] [MaxLength(10)] [MinLength(1)] string batchId) =>
         Ok(await dbContext.EmailTasks
             .Where(t => t.BatchId.ToUpper() == batchId.ToUpper() && t.ApiKeyOwner == User.ApiKeyOwner())
             .OrderBy(t => t.CreatedAt)

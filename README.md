@@ -100,7 +100,9 @@ If no email tasks are submitted, the following response will be returned:
 
 Returns a list of all Batch IDs in the system for the provided API Key, ordered by creation date descending.
 
-#### GET /batch/{batchId}
+#### POST /batch/
+
+Body: "{batchId}"
 
 Returns all email tasks for a specific Batch ID, ordered by creation date ascending.
 

@@ -69,9 +69,11 @@ X-API-Key: {{ApiKey}}
 %}
 
 ### List all email tasks for returned batch ID
-GET {{HostAddress}}/batch/{{batchId}}
+POST {{HostAddress}}/batch/
 Content-Type: application/json
 X-API-Key: {{ApiKey}}
+
+"{{batchId}}"
 
 ### List all email batches
 GET {{HostAddress}}/batches
