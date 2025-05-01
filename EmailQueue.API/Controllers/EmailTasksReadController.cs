@@ -28,7 +28,7 @@ public class EmailTasksReadController(EmailQueueDbContext dbContext) : Controlle
         "CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons")]
     public async Task<ActionResult> GetBatchDetailsAsync([FromBody] BatchRequest request) =>
         Ok(await dbContext.EmailTasks
-            .Where(t => t.BatchId.ToUpper() == request.BatchId.ToUpper() && t.ApiKeyOwner == User.ApiKeyOwner())
+            .Where(t => t.BatchId == request.BatchId && t.ApiKeyOwner == User.ApiKeyOwner())
             .OrderBy(t => t.CreatedAt)
             .ToListAsync());
 }
