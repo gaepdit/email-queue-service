@@ -13,7 +13,6 @@
         <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" />
         <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
         <PackageReference Include="Mindscape.Raygun4Net.AspNetCore" />
-        <PackageReference Include="Mindscape.Raygun4Net.Extensions.Logging" />
     </ItemGroup>
 
     <ItemGroup>

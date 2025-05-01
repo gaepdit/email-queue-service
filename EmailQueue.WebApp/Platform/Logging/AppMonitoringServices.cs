@@ -1,6 +1,5 @@
 ﻿using Mindscape.Raygun4Net;
 using Mindscape.Raygun4Net.AspNetCore;
-using Mindscape.Raygun4Net.Extensions.Logging;
 
 namespace EmailQueue.WebApp.Platform.Logging;
 
@@ -27,11 +26,5 @@ public static class AppMonitoringServices
             })
             .AddRaygunUserProvider()
             .AddHttpContextAccessor(); // needed by RaygunScriptPartial
-
-        builder.Logging.AddRaygunLogger(options =>
-        {
-            options.MinimumLogLevel = LogLevel.Warning;
-            options.OnlyLogExceptions = false;
-        });
     }
 }
