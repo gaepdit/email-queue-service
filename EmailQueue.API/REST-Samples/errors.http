@@ -81,6 +81,26 @@ X-API-Key: {{ApiKey}}
   }
 ]
 
+### (HTTP 400 Bad Request) empty "from" field
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
+[
+  {
+    "recipients": [
+      "test@example.org"
+    ],
+    "copyRecipients": [
+      "test@example.com"
+    ],
+    "from": "",
+    "subject": "-",
+    "body": "-",
+    "isHtml": false
+  }
+]
+
 ### (HTTP 400 Bad Request) missing "subject" field
 POST {{HostAddress}}/add
 Content-Type: application/json

@@ -66,10 +66,9 @@ Request body: Array of email tasks.
 
 Each email task contains the following properties:
 
-- `recipients`: List of recipient email addresses (Required)
-- `copyRecipients`: List of copied email addresses (Optional)
-- `from`: The return (from) email address (Required, but may be empty. If empty, the `DefaultSenderEmail` address from
-  the `EmailServiceSettings` is used)
+- `recipients`: List of recipient email addresses (Required; may not be empty or contain any empty values)
+- `copyRecipients`: List of copied email addresses (Optional; may not contain empty values if included)
+- `from`: The return (from) email address (Required)
 - `subject`: Email subject line, max 200 characters (Required)
 - `body`: Email content, max 20,000 characters (Required)
 - `isHtml`: Boolean indicating if the body is formatted as HTML (Required)

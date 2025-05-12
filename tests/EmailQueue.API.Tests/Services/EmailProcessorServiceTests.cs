@@ -147,7 +147,7 @@ public class EmailProcessorServiceTests
         await _emailService.Received(1).SendEmailAsync(Arg.Is<Message>(m =>
             m.Subject == _emailTask.Subject &&
             m.Recipients.Contains(_emailTask.Recipients[0]) &&
-            m.CopyRecipients.Contains(_emailTask.CopyRecipients[0]) &&
+            m.CopyRecipients.Contains(_emailTask.CopyRecipients![0]) &&
             m.SenderEmail == _emailTask.From &&
             m.TextBody == _emailTask.Body &&
             m.HtmlBody == null));
