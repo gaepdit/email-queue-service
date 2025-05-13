@@ -57,11 +57,11 @@ public class EmailProcessorServiceTests
     private static EmailTask CreateEmailTask() => EmailTask.Create(
         new NewEmailTask
         {
-            Body = "Test Body",
+            From = "test@example.com",
             Recipients = ["test@example.com"],
             CopyRecipients = ["test@example.net"],
-            From = "test@example.com",
             Subject = "Test Subject",
+            Body = "Test Body",
             IsHtml = false,
         },
         batchId: "1234567890", apiKeyOwner: "Test Owner", counter: 1);
@@ -145,10 +145,10 @@ public class EmailProcessorServiceTests
         // Assert
         _emailTask.Status.Should().Be("Sent");
         await _emailService.Received(1).SendEmailAsync(Arg.Is<Message>(m =>
-            m.Subject == _emailTask.Subject &&
-            m.Recipients.Contains(_emailTask.Recipients[0]) &&
-            m.CopyRecipients.Contains(_emailTask.CopyRecipients[0]) &&
             m.SenderEmail == _emailTask.From &&
+            m.Recipients.Contains(_emailTask.Recipients[0]) &&
+            m.CopyRecipients.Contains(_emailTask.CopyRecipients![0]) &&
+            m.Subject == _emailTask.Subject &&
             m.TextBody == _emailTask.Body &&
             m.HtmlBody == null));
         _logger.Received().Log(LogLevel.Information, Arg.Any<EventId>(), Arg.Any<object>(), null,

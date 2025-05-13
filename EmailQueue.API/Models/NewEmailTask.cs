@@ -5,16 +5,17 @@ namespace EmailQueue.API.Models;
 
 public record NewEmailTask
 {
+    [Required(AllowEmptyStrings = false)]
+    [StringLength(100)]
+    public string From { get; init; } = null!;
+
     [JsonRequired]
     [MinLength(1)]
     [NoEmptyStrings]
     public List<string> Recipients { get; init; } = [];
 
     [NoEmptyStrings]
-    public List<string> CopyRecipients { get; init; } = [];
-
-    [StringLength(100)]
-    public string From { get; init; } = null!;
+    public List<string>? CopyRecipients { get; init; }
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(200)]
