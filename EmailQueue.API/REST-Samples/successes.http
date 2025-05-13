@@ -19,16 +19,17 @@ X-API-Key: {{ApiKey}}
 
 [
   {
+    "from": "test.from@example.net",
     "recipients": [
       "test1@example.com"
     ],
     "copyRecipients": [],
-    "from": "test.from@example.net",
     "subject": "Test Email 1",
     "body": "<h1>Test Email 1</h1><p>HTML content for email 1</p>",
     "isHtml": true
   },
   {
+    "from": "test.from@example.net",
     "recipients": [
       "test2@example.com"
     ],
@@ -36,27 +37,26 @@ X-API-Key: {{ApiKey}}
       "test2cc@example.com",
       "test2cc2@example.com"
     ],
-    "from": "test.from@example.net",
     "subject": "Test Email 2",
     "body": "Plain text content for email 2",
     "isHtml": false
   },
   {
+    "from": "test.from@example.net",
     "recipients": [
       "test3@example.com",
       "test3r2@example.com"
     ],
-    "from": "test.from@example.net",
     "subject": "Test Email 3",
     "body": "<h1>Test Email 3</h1><p>HTML content for email 3</p>",
     "isHtml": true
   },
   {
+    "from": "test.from@example.net",
     "recipients": [
       "test4@example.com"
     ],
     "copyRecipients": null,
-    "from": "test.from@example.net",
     "subject": "Test Email 4",
     "body": "Plain text content for email 4",
     "isHtml": false
