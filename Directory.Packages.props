@@ -13,8 +13,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.4" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.4" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="3.8.4" />
-    <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.8.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
     <PackageVersion Include="Mindscape.Raygun4Net.AspNetCore" Version="11.2.3" />

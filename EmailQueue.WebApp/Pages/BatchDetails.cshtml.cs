@@ -1,12 +1,10 @@
 using EmailQueue.WebApp.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
 namespace EmailQueue.WebApp.Pages;
 
-[Authorize]
 public class BatchDetailsModel(EmailQueueApiService apiService, ILogger<BatchDetailsModel> logger) : PageModel
 {
     [BindProperty]

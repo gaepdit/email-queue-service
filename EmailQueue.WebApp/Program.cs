@@ -1,5 +1,4 @@
 ﻿using EmailQueue.WebApp.Platform;
-using EmailQueue.WebApp.Platform.Authentication;
 using EmailQueue.WebApp.Platform.DataProtection;
 using EmailQueue.WebApp.Platform.Logging;
 using EmailQueue.WebApp.Services;
@@ -12,9 +11,6 @@ builder.BindSettings();
 
 // Persist data protection keys.
 await builder.AddDataProtectionServices();
-
-// Configure authentication.
-builder.AddAuthenticationServices();
 
 // Configure the EmailQueue API.
 builder.Services.AddHttpClient<EmailQueueApiService>();
@@ -43,12 +39,8 @@ app.UseHsts();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapStaticAssets();
-app.MapRazorPages()
-    .WithStaticAssets()
-    .RequireAuthorization();
+app.MapRazorPages().WithStaticAssets();
 
 await app.RunAsync();
