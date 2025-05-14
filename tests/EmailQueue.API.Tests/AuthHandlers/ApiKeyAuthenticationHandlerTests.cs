@@ -12,16 +12,16 @@ namespace EmailQueue.API.Tests.AuthHandlers;
 
 public class ApiKeyAuthenticationHandlerTests
 {
-    private ILoggerFactory _loggerFactory;
     private ApiKeyAuthenticationHandler _sut;
+    private ILoggerFactory _loggerFactory;
     private HttpContext _httpContext;
     private const string ValidApiKey = "valid-api-key";
 
-    private readonly ApiKey _testKey = new()
+    private readonly ApiClient _testKey = new()
     {
-        Key = ValidApiKey,
-        Owner = "Test Owner",
-        Permissions = ["read", "write"],
+        Client = "Test Client",
+        ClientId = Guid.NewGuid(),
+        ApiKey = ValidApiKey,
     };
 
     [SetUp]
@@ -33,7 +33,7 @@ public class ApiKeyAuthenticationHandlerTests
         var options = Substitute.For<IOptionsMonitor<AuthenticationSchemeOptions>>();
         options.Get(testScheme).Returns(new AuthenticationSchemeOptions());
 
-        var apiKeys = Substitute.For<IOptionsSnapshot<List<ApiKey>>>();
+        var apiKeys = Substitute.For<IOptionsSnapshot<List<ApiClient>>>();
         apiKeys.Value.Returns([_testKey]);
 
         _loggerFactory = Substitute.For<ILoggerFactory>();
@@ -58,21 +58,56 @@ public class ApiKeyAuthenticationHandlerTests
     }
 
     [Test]
-    public async Task HandleAuthenticateAsync_WithMissingApiKey_ReturnsFailure()
+    public async Task HandleAuthenticateAsync_WithMissingClientId_ReturnsFailure()
     {
+        // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = ValidApiKey;
+
         // Act
         var result = await _sut.AuthenticateAsync();
 
         // Assert
         using var scope = new AssertionScope();
         result.Succeeded.Should().BeFalse();
-        result.Failure!.Message.Should().Be("API Key is missing");
+        result.Failure!.Message.Should().Be("Client ID header is missing");
+    }
+
+    [Test]
+    public async Task HandleAuthenticateAsync_WithMisformattedClientId_ReturnsFailure()
+    {
+        // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = string.Empty;
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = ValidApiKey;
+
+        // Act
+        var result = await _sut.AuthenticateAsync();
+
+        // Assert
+        using var scope = new AssertionScope();
+        result.Succeeded.Should().BeFalse();
+        result.Failure!.Message.Should().Be("Client ID header format is invalid");
+    }
+
+    [Test]
+    public async Task HandleAuthenticateAsync_WithMissingApiKey_ReturnsFailure()
+    {
+        // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = _testKey.ClientId.ToString();
+
+        // Act
+        var result = await _sut.AuthenticateAsync();
+
+        // Assert
+        using var scope = new AssertionScope();
+        result.Succeeded.Should().BeFalse();
+        result.Failure!.Message.Should().Be("API Key header is missing");
     }
 
     [Test]
     public async Task HandleAuthenticateAsync_WithEmptyApiKey_ReturnsFailure()
     {
         // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = _testKey.ClientId.ToString();
         _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = string.Empty;
 
         // Act
@@ -85,9 +120,26 @@ public class ApiKeyAuthenticationHandlerTests
     }
 
     [Test]
+    public async Task HandleAuthenticateAsync_WithInvalidClientId_ReturnsFailure()
+    {
+        // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = Guid.NewGuid().ToString();
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = ValidApiKey;
+
+        // Act
+        var result = await _sut.AuthenticateAsync();
+
+        // Assert
+        using var scope = new AssertionScope();
+        result.Succeeded.Should().BeFalse();
+        result.Failure!.Message.Should().Be("Invalid Client ID");
+    }
+
+    [Test]
     public async Task HandleAuthenticateAsync_WithInvalidApiKey_ReturnsFailure()
     {
         // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = _testKey.ClientId.ToString();
         _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = "invalid-key";
 
         // Act
@@ -103,6 +155,7 @@ public class ApiKeyAuthenticationHandlerTests
     public async Task HandleAuthenticateAsync_WithValidApiKey_ReturnsSuccess()
     {
         // Arrange
+        _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ClientIdHeaderName] = _testKey.ClientId.ToString();
         _httpContext.Request.Headers[ApiKeyAuthenticationHandler.ApiKeyHeaderName] = ValidApiKey;
 
         // Act
@@ -114,11 +167,8 @@ public class ApiKeyAuthenticationHandlerTests
         var identity = result.Principal?.Identity as ClaimsIdentity;
         identity.Should().NotBeNull();
         Debug.Assert(identity != null);
-        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.Name && c.Value == _testKey.Owner);
-        identity.Claims.Should().Contain(c => c.Type == ClaimTypes.NameIdentifier && c.Value == _testKey.Key);
+        identity.Claims.Should().Contain(c => c.Type == nameof(ApiClient.Client) && c.Value == _testKey.Client);
         identity.Claims.Should()
-            .Contain(c => c.Type == ApiKeyAuthenticationHandler.PermissionClaimType && c.Value == "read");
-        identity.Claims.Should()
-            .Contain(c => c.Type == ApiKeyAuthenticationHandler.PermissionClaimType && c.Value == "write");
+            .Contain(c => c.Type == nameof(ApiClient.ClientId) && c.Value == _testKey.ClientId.ToString());
     }
 }

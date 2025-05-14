@@ -30,8 +30,9 @@ public static class AppSettings
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public record EmailQueueApi
 {
-    public string BaseUrl { get; init; } = null!;
-    public string ApiKey { get; init; } = null!;
+    public required string BaseUrl { get; init; }
+    public required string ClientId { get; init; }
+    public required string ApiKey { get; init; }
 }
 
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]

@@ -64,7 +64,7 @@ public class EmailProcessorServiceTests
             Body = "Test Body",
             IsHtml = false,
         },
-        batchId: "1234567890", apiKeyOwner: "Test Owner", counter: 1);
+        batchId: "1234567890", client: "Test Client", clientId: Guid.NewGuid(), counter: 1);
 
     [Test]
     public async Task ProcessEmailAsync_WhenEmailingDisabled_LogsWarningAndReturns()
@@ -87,7 +87,7 @@ public class EmailProcessorServiceTests
     }
 
     [Test]
-    public async Task ProcessEmailAsync_WhenEmailNotFound_LogsErrorAndReturns()
+    public async Task ProcessEmailAsync_WhenEmailNotInDatabase_LogsErrorAndReturns()
     {
         // Arrange
         var nonExistentEmailTask = CreateEmailTask();

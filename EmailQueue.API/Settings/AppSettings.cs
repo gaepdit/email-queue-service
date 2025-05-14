@@ -13,7 +13,7 @@ public static class AppSettingsExtensions
     public static void BindAppSettings(this WebApplicationBuilder builder)
     {
         // Bind app settings.
-        builder.Services.AddOptions<List<ApiKey>>().BindConfiguration(configSectionPath: "ApiKeys");
+        builder.Services.AddOptions<List<ApiClient>>().BindConfiguration(configSectionPath: "ApiClients");
         builder.Configuration.GetSection(nameof(AppSettings.QueueSettings)).Bind(AppSettings.QueueSettings);
         builder.Configuration.GetSection(nameof(AppSettings.EmailServiceSettings))
             .Bind(AppSettings.EmailServiceSettings);
@@ -25,9 +25,9 @@ public record QueueSettings
     public int ProcessingDelaySeconds { get; [UsedImplicitly] init; } = 5; // Default value if not specified in config
 }
 
-public record ApiKey
+public record ApiClient
 {
-    public string Key { get; init; } = null!;
-    public string Owner { get; init; } = null!;
-    public string[] Permissions { get; init; } = []; // Default to no access.
+    public required string Client { get; init; }
+    public required Guid ClientId { get; init; }
+    public required string ApiKey { get; init; }
 }

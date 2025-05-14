@@ -25,21 +25,22 @@ Configure the delay in seconds between processing each email.
 
 ### Security
 
-All API endpoints require authentication using an API Key passed in the `X-API-Key` header with each request. Valid API
-keys are configured in `appsettings.json`.
+All API endpoints require authentication using a Client ID passed in the `X-Client-ID` header and an API Key passed in
+the `X-API-Key` header with each request. Valid API clients are configured in `appsettings.json`:
 
 ```json
 {
-  "ApiKeys": [
+  "ApiClients": [
     {
-      "owner": "Your Web Application",
-      "key": "your-secret-api-key-1"
+      "Client": "Your Web Application",
+      "ClientId": "your-guid",
+      "ApiKey": "your-secret-api-key-1"
     }
   ]
 }
 ```
 
-The owner field is saved in the database along with each email submitted using that API Key.
+The Client name and Client ID fields are saved in the database with each email submitted using that ID.
 
 ### API Endpoints
 
@@ -118,6 +119,7 @@ through `appsettings.json` with the following sections:
 {
   "EmailQueueApi": {
     "BaseUrl": "https://localhost:7145",
+    "ClientId": "your-guid",
     "ApiKey": "your-secret-api-key-1"
   }
 }

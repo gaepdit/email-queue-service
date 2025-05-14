@@ -7,7 +7,7 @@ namespace EmailQueue.API.Services;
 
 public interface IQueueService
 {
-    Task<string?> EnqueueItems(NewEmailTask[] newEmailTasks, string apiKeyOwner);
+    Task<string?> EnqueueItems(NewEmailTask[] newEmailTasks, string client, Guid clientId);
     Task<EmailTask?> DequeueAsync(CancellationToken cancellationToken);
     Task InitializeQueueFromDatabase();
 }
@@ -41,14 +41,15 @@ public class QueueService(IServiceScopeFactory scopeFactory, ILogger<QueueServic
     private const string Pool = "ABCDEFGHKMNPQRSTUVWXYZ2345689";
     private static string GetBatchId() => new(Random.Shared.GetItems<char>(Pool, 10));
 
-    public async Task<string?> EnqueueItems(NewEmailTask[] newEmailTasks, string apiKeyOwner)
+    public async Task<string?> EnqueueItems(NewEmailTask[] newEmailTasks, string client, Guid clientId)
     {
         if (newEmailTasks.Length == 0) return null;
 
         // Create new entities.
         var batchId = GetBatchId();
         var emailTasksList = newEmailTasks
-            .Select(task => EmailTask.Create(task, batchId, apiKeyOwner, Interlocked.Increment(ref _currentCounter)))
+            .Select(task => EmailTask.Create(task, batchId, client, clientId,
+                counter: Interlocked.Increment(ref _currentCounter)))
             .ToList();
 
         // Save new items to the database.
