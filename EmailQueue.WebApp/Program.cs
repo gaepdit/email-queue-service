@@ -1,8 +1,6 @@
 ﻿using EmailQueue.WebApp.Platform;
 using EmailQueue.WebApp.Platform.DataProtection;
-using EmailQueue.WebApp.Platform.Logging;
 using EmailQueue.WebApp.Services;
-using Mindscape.Raygun4Net.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,16 +21,11 @@ builder.Services.AddRazorPages();
 // TODO: Change to `FromDays` in production.
 builder.Services.AddHsts(opts => opts.MaxAge = TimeSpan.FromSeconds(360));
 
-// Configure application crash monitoring.
-builder.AddErrorLogging();
-
 var app = builder.Build();
 
 // Configure error handling.
 if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 else app.UseExceptionHandler("/Error");
-
-if (!string.IsNullOrEmpty(AppSettings.RaygunSettings.ApiKey)) app.UseRaygun();
 
 // Configure the application pipeline.
 app.UseHsts();
