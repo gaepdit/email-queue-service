@@ -1,10 +1,8 @@
 using EmailQueue.WebApp.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EmailQueue.WebApp.Pages;
 
-[Authorize]
 public class AllBatchesModel(EmailQueueApiService apiService, ILogger<AllBatchesModel> logger) : PageModel
 {
     public IEnumerable<BatchViewModel> AllBatches { get; private set; } = [];

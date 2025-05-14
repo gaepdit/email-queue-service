@@ -4,9 +4,6 @@ namespace EmailQueue.WebApp.Platform;
 
 public static class AppSettings
 {
-    public static RaygunClientSettings RaygunSettings { get; } = new();
-    public static bool UseEntraId { get; private set; } = true;
-    public static bool DevAuthFails { get; private set; }
     public static string? InformationalVersion { get; private set; }
     public static string? InformationalBuild { get; private set; }
     public const string DateTimeFormat = "d\u2011MMM\u2011yyyy h:mm:ss\u00a0tt";
@@ -14,9 +11,6 @@ public static class AppSettings
     public static void BindSettings(this WebApplicationBuilder builder)
     {
         builder.Services.AddOptions<EmailQueueApi>().BindConfiguration(configSectionPath: nameof(EmailQueueApi));
-        builder.Configuration.GetSection(nameof(RaygunSettings)).Bind(RaygunSettings);
-        UseEntraId = builder.Configuration.GetValue<bool>(nameof(UseEntraId));
-        DevAuthFails = builder.Configuration.GetValue<bool>(nameof(DevAuthFails));
 
         // App version
         var segments = (Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
@@ -33,10 +27,4 @@ public record EmailQueueApi
     public required string BaseUrl { get; init; }
     public required string ClientId { get; init; }
     public required string ApiKey { get; init; }
-}
-
-[UsedImplicitly(ImplicitUseTargetFlags.Members)]
-public class RaygunClientSettings
-{
-    public string? ApiKey { get; init; }
 }

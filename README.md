@@ -124,29 +124,3 @@ through `appsettings.json` with the following sections:
   }
 }
 ```
-
-### Authentication
-
-The sample web application supports two authentication modes:
-
-* Dev/fake authentication (default when running in a development environment)
-
-  To test authentication failure when using the dev authentication, set `DevAuthFails` to `true`.
-
-* Microsoft Entra ID authentication (default when running in a production environment)
-
-  To enable Entra ID authentication while running in development, set `UseEntraId` to `true`.
-
-```json
-{
-  "UseEntraId": false,
-  "DevAuthFails": false,
-  "AzureAd": {
-    "Instance": "https://login.microsoftonline.com/",
-    "CallbackPath": "/signin-oidc",
-    "Domain": "[Enter the domain of your tenant]",
-    "TenantId": "[Enter the Directory (tenant) ID]",
-    "ClientId": "[Enter the Application (client) ID]"
-  }
-}
-```

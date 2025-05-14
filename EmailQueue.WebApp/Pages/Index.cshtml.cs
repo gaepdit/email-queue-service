@@ -7,6 +7,5 @@ namespace EmailQueue.WebApp.Pages;
 [AllowAnonymous]
 public class IndexModel : PageModel
 {
-    public IActionResult OnGet() =>
-        User.Identity?.IsAuthenticated == true ? RedirectToPage("/AllBatches") : Challenge();
+    public IActionResult OnGet() => RedirectToPage("/AllBatches");
 }
