@@ -15,8 +15,6 @@ public class ApiKeyAuthenticationHandler(
 {
     internal const string ClientIdHeaderName = "X-Client-ID";
     internal const string ApiKeyHeaderName = "X-API-Key";
-    internal const string ClientName = nameof(ClientName);
-    internal const string ClientId = nameof(ClientId);
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
