@@ -2,36 +2,62 @@
 # See https://www.jetbrains.com/help/rider/Http_client_in__product__code_editor.html
 
 @HostAddress = https://localhost:7145
+@ClientId = 00000000-0000-0000-0000-000000000000
+@InvalidClientId = FFFFFFFF-0000-0000-0000-000000000000
 @ApiKey = client-api-key-1
 @InvalidApiKey = invalid-api-key
 
 // ===================
 // == ERROR TESTING == 
 
+### GET (HTTP 401 Unauthorized) invalid Client ID
+GET {{HostAddress}}/batches
+Content-Type: application/json
+X-Client-Id: {{InvalidClientId}}
+X-API-Key: {{ApiKey}}
+
+### POST (HTTP 401 Unauthorized) invalid Client ID
+POST {{HostAddress}}/add
+Content-Type: application/json
+X-Client-Id: {{InvalidClientId}}
+X-API-Key: {{ApiKey}}
+
+[]
+
 ### GET (HTTP 401 Unauthorized) incorrect API key
 GET {{HostAddress}}/batches
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{InvalidApiKey}}
 
 ### POST (HTTP 401 Unauthorized) incorrect API key
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{InvalidApiKey}}
 
 []
 
+### (HTTP 401 Unauthorized) missing Client ID
+GET {{HostAddress}}/batches
+Content-Type: application/json
+X-API-Key: {{ApiKey}}
+
 ### (HTTP 401 Unauthorized) missing API key
 GET {{HostAddress}}/batches
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 
 ### (HTTP 400 Bad Request) missing Batch Request
 POST {{HostAddress}}/batch/
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 ### (HTTP 400 Bad Request) empty Batch Request
 POST {{HostAddress}}/batch/
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 {}
@@ -39,6 +65,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty Batch ID
 POST {{HostAddress}}/batch/
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 {
@@ -48,6 +75,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) missing "from" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -67,6 +95,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty "from" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -87,6 +116,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) missing "recipients" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -104,6 +134,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty "recipients" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -122,6 +153,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty value in the "recipients" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -142,6 +174,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty value in the "copyRecipients" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -162,6 +195,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) missing "subject" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -181,6 +215,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty "subject" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -201,6 +236,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) extra long "subject" field (201 characters)
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -221,6 +257,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) missing "body" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -240,6 +277,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) empty "body" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -260,6 +298,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) missing "isHtml" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [
@@ -279,6 +318,7 @@ X-API-Key: {{ApiKey}}
 ### (HTTP 400 Bad Request) incorrectly formatted "isHtml" field
 POST {{HostAddress}}/add
 Content-Type: application/json
+X-Client-Id: {{ClientId}}
 X-API-Key: {{ApiKey}}
 
 [

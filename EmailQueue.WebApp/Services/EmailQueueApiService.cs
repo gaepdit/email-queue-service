@@ -14,6 +14,7 @@ public class EmailQueueApiService(
     {
         logger.LogInformation("Getting batch {BatchId}", batchId);
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
+        client.DefaultRequestHeaders.Add("X-Client-ID", apiSettings.Value.ClientId);
         client.DefaultRequestHeaders.Add("X-API-Key", apiSettings.Value.ApiKey);
         var requestPayload = new { BatchId = batchId };
         using var response = await client.PostAsync(UriCombine(apiSettings.Value.BaseUrl, "batch"),
@@ -26,6 +27,7 @@ public class EmailQueueApiService(
     {
         logger.LogInformation("Getting all batches");
         using var client = httpClientFactory.CreateClient(nameof(EmailQueueApiService));
+        client.DefaultRequestHeaders.Add("X-Client-ID", apiSettings.Value.ClientId);
         client.DefaultRequestHeaders.Add("X-API-Key", apiSettings.Value.ApiKey);
         using var response = await client.GetAsync(UriCombine(apiSettings.Value.BaseUrl, "batches"));
         response.EnsureSuccessStatusCode();
@@ -49,7 +51,7 @@ public record EmailTaskViewModel : IEndPointViewModel
 {
     public int Counter { get; init; }
     public required string Status { get; init; }
-    public string? ApiKeyOwner { get; init; }
+    public required string Client { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? AttemptedAt { get; init; }
     public List<string> Recipients { get; init; } = [];

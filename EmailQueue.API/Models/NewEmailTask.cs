@@ -7,7 +7,7 @@ public record NewEmailTask
 {
     [Required(AllowEmptyStrings = false)]
     [StringLength(100)]
-    public string From { get; init; } = null!;
+    public required string From { get; init; }
 
     [JsonRequired]
     [MinLength(1)]
@@ -19,11 +19,11 @@ public record NewEmailTask
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(200)]
-    public string Subject { get; init; } = null!;
+    public required string Subject { get; init; }
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(20000)]
-    public string Body { get; init; } = null!;
+    public required string Body { get; init; }
 
     [JsonRequired]
     public bool IsHtml { get; init; }

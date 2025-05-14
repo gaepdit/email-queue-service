@@ -8,42 +8,41 @@ namespace EmailQueue.API.AuthHandlers;
 
 public class ApiKeyAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
-    IOptionsSnapshot<List<ApiKey>> apiKeys,
+    IOptionsSnapshot<List<ApiClient>> apiClients,
     ILoggerFactory logger,
     UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
+    internal const string ClientIdHeaderName = "X-Client-ID";
     internal const string ApiKeyHeaderName = "X-API-Key";
-    internal const string PermissionClaimType = "permission";
+    internal const string ClientName = nameof(ClientName);
+    internal const string ClientId = nameof(ClientId);
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if (!Request.Headers.TryGetValue(ClientIdHeaderName, out var clientIdHeaderValues))
+            return Task.FromResult(AuthenticateResult.Fail("Client ID header is missing"));
+        if (!Guid.TryParse(clientIdHeaderValues.FirstOrDefault(), out var providedClientId))
+            return Task.FromResult(AuthenticateResult.Fail("Client ID header format is invalid"));
+
         if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var apiKeyHeaderValues))
-        {
-            return Task.FromResult(AuthenticateResult.Fail("API Key is missing"));
-        }
-
+            return Task.FromResult(AuthenticateResult.Fail("API Key header is missing"));
         var providedApiKey = apiKeyHeaderValues.FirstOrDefault();
-
         if (string.IsNullOrWhiteSpace(providedApiKey))
-        {
             return Task.FromResult(AuthenticateResult.Fail("API Key is empty"));
-        }
 
-        var matchingKey = apiKeys.Value.FirstOrDefault(k => k.Key == providedApiKey);
+        var matchingKey = apiClients.Value.FirstOrDefault(key => key.ClientId == providedClientId);
 
         if (matchingKey == null)
-        {
+            return Task.FromResult(AuthenticateResult.Fail("Invalid Client ID"));
+        if (!matchingKey.ApiKey.Equals(providedApiKey))
             return Task.FromResult(AuthenticateResult.Fail("Invalid API Key"));
-        }
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Name, matchingKey.Owner),
-            new(ClaimTypes.NameIdentifier, matchingKey.Key),
+            new(nameof(ApiClient.Client), matchingKey.Client),
+            new(nameof(ApiClient.ClientId), matchingKey.ClientId.ToString()),
         };
-
-        claims.AddRange(matchingKey.Permissions.Select(permission => new Claim(PermissionClaimType, permission)));
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);

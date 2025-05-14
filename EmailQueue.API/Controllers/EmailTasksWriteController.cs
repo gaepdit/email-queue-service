@@ -1,3 +1,4 @@
+using EmailQueue.API.AuthHandlers;
 using EmailQueue.API.Models;
 using EmailQueue.API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ public class EmailTasksWriteController(IQueueService queueService) : ControllerB
         var emptySubmissionResult = new { status = "Empty", count = 0, batchId = string.Empty };
         if (emailTasks.Length == 0) return Ok(emptySubmissionResult);
 
-        var batchId = await queueService.EnqueueItems(emailTasks, User.Identity?.Name ?? "[unknown]");
+        var batchId = await queueService.EnqueueItems(emailTasks, User.ApiClientName(), User.ApiClientId());
 
         return batchId == null
             ? Ok(emptySubmissionResult)

@@ -17,7 +17,9 @@ public record EmailTask : NewEmailTask
     public int Counter { get; private init; }
 
     [StringLength(50)]
-    public string? ApiKeyOwner { get; private init; }
+    public string? Client { get; private init; }
+
+    public Guid ClientId { get; private init; }
 
     [Required(AllowEmptyStrings = false)]
     [StringLength(15)]
@@ -39,12 +41,13 @@ public record EmailTask : NewEmailTask
         AttemptedAt = DateTime.UtcNow;
     }
 
-    public static EmailTask Create(NewEmailTask resource, string batchId, string apiKeyOwner, int counter) =>
+    public static EmailTask Create(NewEmailTask resource, string batchId, string client, Guid clientId, int counter) =>
         new(id: Guid.NewGuid())
         {
             BatchId = batchId,
             Counter = counter,
-            ApiKeyOwner = apiKeyOwner,
+            Client = client,
+            ClientId = clientId,
             From = resource.From,
             Recipients = resource.Recipients,
             CopyRecipients = resource.CopyRecipients,
