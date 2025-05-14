@@ -17,10 +17,6 @@ builder.Services.AddScoped<EmailQueueApiService>();
 // Configure UI services.
 builder.Services.AddRazorPages();
 
-// Configure HSTS.
-// TODO: Change to `FromDays` in production.
-builder.Services.AddHsts(opts => opts.MaxAge = TimeSpan.FromSeconds(360));
-
 var app = builder.Build();
 
 // Configure error handling.
